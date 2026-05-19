@@ -2,53 +2,58 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
-
 # ContextLinkr
 
-<!-- badges: start -->
-<!-- badges: end -->
+ContextLinkr is an R package for linking individual-level records to geographic
+contextual data for multilevel health research.
 
-The goal of ContextLinkr is to ...
+The package is currently in early development. The first implemented function is
+`gc_address()`, which geocodes address data using configurable geocoding
+services.
 
 ## Installation
 
-You can install the development version of ContextLinkr like so:
-
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+```{r eval=FALSE}
+# Not yet available from CRAN.
+# Development installation instructions will be added after the GitHub
+# repository is public.
 ```
 
-## Example
+## Basic geocoding example
 
-This is a basic example which shows you how to solve a common problem:
+`gc_address()` accepts either a full address column or separate street, city,
+state, and ZIP code columns.
 
-```{r example}
+Because geocoding may send address information to external services, users must
+explicitly confirm that they have permission to do so.
+
+```{r eval=FALSE}
 library(ContextLinkr)
-## basic example code
+
+res <- gc_address(
+  sample_addresses,
+  street = street,
+  city = city,
+  state = state,
+  zip = zip,
+  geocoder = "osm",
+  confirm_external = TRUE
+)
+
+res
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Users working with protected, sensitive, or restricted data should geocode only
+in approved computing environments. If coordinates are already available,
+downstream ContextLinkr functions will allow users to skip geocoding and proceed
+directly to geographic and contextual linkage steps.
 
-```{r cars}
-summary(cars)
-```
+## Development roadmap
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+Planned core functions include:
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+- `gc_address()` — geocode address data.
+- `id_tract()` — identify Census tracts containing coordinates.
+- `get_context()` — retrieve contextual variables from Cancer InFocus.
+- `link_context()` — join individual records to contextual variables through a
+  wrapper workflow.
