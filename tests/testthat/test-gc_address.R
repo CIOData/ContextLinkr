@@ -52,3 +52,24 @@ test_that("gc_address errors when requested columns are missing", {
         "columns were not found"
     )
 })
+
+test_that("gc_address accepts quoted column names during validation", {
+    df <- tibble::tibble(
+        street = "1600 Pennsylvania Avenue NW",
+        city = "Washington",
+        state = "DC",
+        zip = "20500"
+    )
+
+    expect_error(
+        gc_address(
+            df,
+            street = "missing_street",
+            city = "city",
+            state = "state",
+            zip = "zip",
+            confirm_external = TRUE
+        ),
+        "missing_street"
+    )
+})

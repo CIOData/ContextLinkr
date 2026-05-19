@@ -5,6 +5,10 @@ col_arg_name <- function(x) {
         return(NULL)
     }
 
+    if (rlang::is_string(expr)) {
+        return(expr)
+    }
+
     rlang::as_name(x)
 }
 

@@ -45,3 +45,35 @@ test_that("normalize_zip preserves five-character ZIP codes", {
 test_that("normalize_zip trims whitespace", {
     expect_equal(normalize_zip(" 640 "), "00640")
 })
+
+test_that("col_arg_name captures unquoted column names", {
+    wrapper <- function(street) {
+        col_arg_name(rlang::enquo(street))
+    }
+
+    expect_equal(wrapper(street), "street")
+})
+
+test_that("col_arg_name captures quoted column names", {
+    wrapper <- function(street) {
+        col_arg_name(rlang::enquo(street))
+    }
+
+    expect_equal(wrapper("street"), "street")
+})
+
+test_that("col_arg_name returns NULL for missing arguments", {
+    wrapper <- function(street) {
+        col_arg_name(rlang::enquo(street))
+    }
+
+    expect_null(wrapper())
+})
+
+test_that("col_arg_name returns NULL for explicit NULL", {
+    wrapper <- function(street = NULL) {
+        col_arg_name(rlang::enquo(street))
+    }
+
+    expect_null(wrapper(NULL))
+})
