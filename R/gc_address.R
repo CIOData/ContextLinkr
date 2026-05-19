@@ -110,12 +110,7 @@ gc_address <- function(
     df_input <- tibble::as_tibble(.data)
 
     if (!is.null(zip_col)) {
-        df_input[[zip_col]] <- stringr::str_pad(
-            as.character(df_input[[zip_col]]),
-            width = 5,
-            side = "left",
-            pad = "0"
-        )
+        df_input[[zip_col]] <- normalize_zip(df_input[[zip_col]])
     }
 
     result <- tidygeocoder::geocode_combine(
@@ -156,34 +151,4 @@ gc_address <- function(
     }
 
     result
-}
-
-
-col_arg_name <- function(x) {
-    expr <- rlang::quo_get_expr(x)
-
-    if (rlang::quo_is_missing(x) || rlang::is_null(expr)) {
-        return(NULL)
-    }
-
-    rlang::as_name(x)
-}
-
-
-build_geocoder_queries <- function(geocoder) {
-    queries <- list()
-
-    if ("census_batch" %in% geocoder) {
-        queries[[length(queries) + 1]] <- list(method = "census", mode = "batch")
-    }
-
-    if ("census_single" %in% geocoder) {
-        queries[[length(queries) + 1]] <- list(method = "census", mode = "single")
-    }
-
-    if ("osm" %in% geocoder) {
-        queries[[length(queries) + 1]] <- list(method = "osm")
-    }
-
-    queries
 }
