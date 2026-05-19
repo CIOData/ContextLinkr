@@ -128,8 +128,8 @@ gc_address <- function(
             state = state_col,
             postalcode = zip_col
         ),
-        lat = latitude,
-        long = longitude
+        lat = "latitude",
+        long = "longitude"
     )
 
     matched <- sum(!is.na(result$latitude) & !is.na(result$longitude))
