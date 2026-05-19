@@ -37,3 +37,15 @@ normalize_zip <- function(x) {
         pad = "0"
     )
 }
+
+add_geocode_status <- function(x, has_full_address) {
+    x$.geocoded <- !is.na(x$latitude) & !is.na(x$longitude)
+
+    x$.geocode_input <- if (has_full_address) {
+        "address"
+    } else {
+        "components"
+    }
+
+    x
+}

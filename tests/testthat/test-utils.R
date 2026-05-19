@@ -77,3 +77,27 @@ test_that("col_arg_name returns NULL for explicit NULL", {
 
     expect_null(wrapper(NULL))
 })
+
+test_that("add_geocode_status identifies geocoded rows", {
+    x <- tibble::tibble(
+        latitude = c(38.9, NA_real_),
+        longitude = c(-77.0, NA_real_)
+    )
+
+    out <- add_geocode_status(x, has_full_address = FALSE)
+
+    expect_equal(out$.geocoded, c(TRUE, FALSE))
+    expect_equal(out$.geocode_input, c("components", "components"))
+})
+
+test_that("add_geocode_status identifies full address input", {
+    x <- tibble::tibble(
+        latitude = 38.9,
+        longitude = -77.0
+    )
+
+    out <- add_geocode_status(x, has_full_address = TRUE)
+
+    expect_true(out$.geocoded)
+    expect_equal(out$.geocode_input, "address")
+})

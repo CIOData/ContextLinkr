@@ -127,7 +127,9 @@ gc_address <- function(
         long = "longitude"
     )
 
-    matched <- sum(!is.na(result$latitude) & !is.na(result$longitude))
+    result <- add_geocode_status(result, has_full_address = has_full_address)
+
+    matched <- sum(result$.geocoded)
     total <- nrow(result)
     match_rate <- if (total > 0) matched / total else NA_real_
 
