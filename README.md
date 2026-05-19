@@ -38,6 +38,7 @@ res <- gc_address(
 )
 
 res
+geocode_summary(res)
 ```
 
 Users working with protected, sensitive, or restricted data should
