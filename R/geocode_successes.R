@@ -1,10 +1,10 @@
-#' Extract failed geocoding results
+#' Extract successful geocoding results
 #'
-#' Returns records that were not successfully geocoded by [gc_address()].
+#' Returns records that were successfully geocoded by [gc_address()].
 #'
 #' @param x A data frame returned by [gc_address()].
 #'
-#' @return A tibble containing rows where `.geocoded` is `FALSE`.
+#' @return A tibble containing rows where `.geocoded` is `TRUE`.
 #'
 #' @examples
 #' x <- tibble::tibble(
@@ -15,11 +15,11 @@
 #'   .geocode_input = c("components", "components")
 #' )
 #'
-#' geocode_failures(x)
+#' geocode_successes(x)
 #'
 #' @export
-geocode_failures <- function(x) {
+geocode_successes <- function(x) {
     check_geocode_result(x)
 
-    tibble::as_tibble(x[!x$.geocoded, , drop = FALSE])
+    tibble::as_tibble(x[x$.geocoded, , drop = FALSE])
 }

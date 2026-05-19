@@ -49,3 +49,18 @@ add_geocode_status <- function(x, has_full_address) {
 
     x
 }
+
+check_geocode_result <- function(x) {
+    if (!is.data.frame(x)) {
+        stop("`x` must be a data frame.", call. = FALSE)
+    }
+
+    if (!".geocoded" %in% names(x)) {
+        stop(
+            "`x` must contain a `.geocoded` column. Was it created by `gc_address()`?",
+            call. = FALSE
+        )
+    }
+
+    invisible(x)
+}

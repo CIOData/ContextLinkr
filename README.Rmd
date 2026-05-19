@@ -42,6 +42,7 @@ res <- gc_address(
 
 res
 geocode_summary(res)
+geocode_successes(res)
 geocode_failures(res)
 ```
 
