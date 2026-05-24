@@ -58,3 +58,16 @@ test_that("id_tract accepts quoted coordinate column names during validation", {
         "missing_latitude"
     )
 })
+
+test_that("add_tract_status identifies rows with tract GEOIDs", {
+    x <- tibble::tibble(
+        id = 1:3,
+        tract_geoid = c("11001980000", NA_character_, "11001006202")
+    )
+
+    out <- add_tract_status(x, state = "DC", year = 2020)
+
+    expect_equal(out$.tract_identified, c(TRUE, FALSE, TRUE))
+    expect_equal(out$.tract_state, c("DC", "DC", "DC"))
+    expect_equal(out$.tract_year, c(2020, 2020, 2020))
+})

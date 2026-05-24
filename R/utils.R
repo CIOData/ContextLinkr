@@ -64,3 +64,11 @@ check_geocode_result <- function(x) {
 
     invisible(x)
 }
+
+add_tract_status <- function(x, state, year) {
+    x$.tract_identified <- !is.na(x$tract_geoid)
+    x$.tract_state <- state
+    x$.tract_year <- year
+
+    x
+}

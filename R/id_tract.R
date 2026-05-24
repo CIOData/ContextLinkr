@@ -124,6 +124,8 @@ id_tract <- function(
         "tract_name"
     )]
 
+    out <- add_tract_status(out, state = state, year = year)
+
     if (keep_geometry) {
         return(sf::st_as_sf(
             out,
