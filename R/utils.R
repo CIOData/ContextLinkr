@@ -87,3 +87,20 @@ check_tract_result <- function(x) {
 
     invisible(x)
 }
+
+filter_status <- function(x, status_col, value) {
+    if (!is.data.frame(x)) {
+        stop("`x` must be a data frame.", call. = FALSE)
+    }
+
+    if (!status_col %in% names(x)) {
+        stop(
+            "`x` must contain a `",
+            status_col,
+            "` column.",
+            call. = FALSE
+        )
+    }
+
+    tibble::as_tibble(x[x[[status_col]] == value, , drop = FALSE])
+}

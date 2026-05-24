@@ -101,3 +101,36 @@ test_that("add_geocode_status identifies full address input", {
     expect_true(out$.geocoded)
     expect_equal(out$.geocode_input, "address")
 })
+
+test_that("filter_status filters TRUE rows", {
+    x <- tibble::tibble(
+        id = 1:3,
+        status = c(TRUE, FALSE, TRUE)
+    )
+
+    out <- filter_status(x, "status", TRUE)
+
+    expect_s3_class(out, "tbl_df")
+    expect_equal(out$id, c(1, 3))
+})
+
+test_that("filter_status filters FALSE rows", {
+    x <- tibble::tibble(
+        id = 1:3,
+        status = c(TRUE, FALSE, TRUE)
+    )
+
+    out <- filter_status(x, "status", FALSE)
+
+    expect_s3_class(out, "tbl_df")
+    expect_equal(out$id, 2)
+})
+
+test_that("filter_status requires status column", {
+    x <- tibble::tibble(id = 1:2)
+
+    expect_error(
+        filter_status(x, "status", TRUE),
+        "must contain a `status` column"
+    )
+})

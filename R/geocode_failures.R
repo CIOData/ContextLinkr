@@ -21,5 +21,5 @@
 geocode_failures <- function(x) {
     check_geocode_result(x)
 
-    tibble::as_tibble(x[!x$.geocoded, , drop = FALSE])
+    filter_status(x, ".geocoded", FALSE)
 }

@@ -21,5 +21,5 @@
 tract_failures <- function(x) {
     check_tract_result(x)
 
-    tibble::as_tibble(x[!x$.tract_identified, , drop = FALSE])
+    filter_status(x, ".tract_identified", FALSE)
 }
