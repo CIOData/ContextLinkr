@@ -49,18 +49,8 @@ id_tract <- function(
         stop("`cache` must be TRUE or FALSE.", call. = FALSE)
     }
 
-    if (is.null(state)) {
-        stop(
-            "`state` is required in this version of `id_tract()`.",
-            call. = FALSE
-        )
-    }
-
-    if (!is.character(state) || length(state) < 1 || any(is.na(state)) || any(!nzchar(state))) {
-        stop("`state` must be a character vector of one or more states.", call. = FALSE)
-    }
-
-    state <- unique(state)
+    state <- normalize_states(state)
+    year <- validate_year(year)
 
     lat_col <- col_arg_name(rlang::enquo(lat))
     lon_col <- col_arg_name(rlang::enquo(lon))

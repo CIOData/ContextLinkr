@@ -141,3 +141,21 @@ test_that("id_tract validates missing state values", {
         "`state` must be a character vector"
     )
 })
+
+test_that("id_tract validates year", {
+    df <- tibble::tibble(
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    expect_error(
+        id_tract(
+            df,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            year = NA_real_
+        ),
+        "`year` must be a single non-missing numeric value"
+    )
+})

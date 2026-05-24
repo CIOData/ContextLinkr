@@ -128,3 +128,37 @@ get_tract_boundaries <- function(state, year, cache = TRUE) {
 
     do.call(rbind, tract_list)
 }
+
+normalize_states <- function(state) {
+    if (is.null(state)) {
+        stop(
+            "`state` is required in this version of `id_tract()`.",
+            call. = FALSE
+        )
+    }
+
+    if (!is.character(state)) {
+        stop("`state` must be a character vector of one or more states.", call. = FALSE)
+    }
+
+    state <- stringr::str_trim(state)
+
+    if (length(state) < 1 || any(is.na(state)) || any(!nzchar(state))) {
+        stop("`state` must be a character vector of one or more states.", call. = FALSE)
+    }
+
+    unique(state)
+}
+
+
+validate_year <- function(year) {
+    if (
+        !is.numeric(year) ||
+        length(year) != 1 ||
+        is.na(year)
+    ) {
+        stop("`year` must be a single non-missing numeric value.", call. = FALSE)
+    }
+
+    year
+}

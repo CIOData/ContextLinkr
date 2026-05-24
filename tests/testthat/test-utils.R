@@ -147,3 +147,64 @@ test_that("add_tract_status collapses multiple states", {
     expect_equal(out$.tract_state, c("DC, MD", "DC, MD"))
     expect_equal(out$.tract_year, c(2020, 2020))
 })
+
+test_that("normalize_states trims whitespace", {
+    expect_equal(normalize_states(c(" DC ", "MD")), c("DC", "MD"))
+})
+
+test_that("normalize_states removes duplicate states", {
+    expect_equal(normalize_states(c("DC", "MD", "DC")), c("DC", "MD"))
+})
+
+test_that("normalize_states requires state", {
+    expect_error(
+        normalize_states(NULL),
+        "`state` is required"
+    )
+})
+
+test_that("normalize_states requires character input", {
+    expect_error(
+        normalize_states(11),
+        "`state` must be a character vector"
+    )
+})
+
+test_that("normalize_states rejects missing values", {
+    expect_error(
+        normalize_states(c("DC", NA_character_)),
+        "`state` must be a character vector"
+    )
+})
+
+test_that("normalize_states rejects blank values", {
+    expect_error(
+        normalize_states(c("DC", "")),
+        "`state` must be a character vector"
+    )
+})
+
+test_that("validate_year accepts single numeric year", {
+    expect_equal(validate_year(2020), 2020)
+})
+
+test_that("validate_year rejects missing year", {
+    expect_error(
+        validate_year(NA_real_),
+        "`year` must be a single non-missing numeric value"
+    )
+})
+
+test_that("validate_year rejects multiple years", {
+    expect_error(
+        validate_year(c(2020, 2021)),
+        "`year` must be a single non-missing numeric value"
+    )
+})
+
+test_that("validate_year rejects non-numeric year", {
+    expect_error(
+        validate_year("2020"),
+        "`year` must be a single non-missing numeric value"
+    )
+})
