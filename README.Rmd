@@ -51,6 +51,28 @@ in approved computing environments. If coordinates are already available,
 downstream ContextLinkr functions will allow users to skip geocoding and proceed
 directly to geographic and contextual linkage steps.
 
+## Census tract identification example
+
+`id_tract()` identifies the Census tract containing each coordinate pair.
+
+```{r eval=FALSE}
+dc_test <- tibble::tibble(
+  id = 1,
+  latitude = 38.8977,
+  longitude = -77.0365
+)
+
+dc_tract <- id_tract(
+  dc_test,
+  lat = latitude,
+  lon = longitude,
+  state = "DC"
+)
+
+dc_tract
+tract_summary(dc_tract)
+```
+
 ## Development roadmap
 
 Planned core functions include:

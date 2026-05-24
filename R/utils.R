@@ -72,3 +72,18 @@ add_tract_status <- function(x, state, year) {
 
     x
 }
+
+check_tract_result <- function(x) {
+    if (!is.data.frame(x)) {
+        stop("`x` must be a data frame.", call. = FALSE)
+    }
+
+    if (!".tract_identified" %in% names(x)) {
+        stop(
+            "`x` must contain a `.tract_identified` column. Was it created by `id_tract()`?",
+            call. = FALSE
+        )
+    }
+
+    invisible(x)
+}
