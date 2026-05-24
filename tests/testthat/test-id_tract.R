@@ -71,3 +71,39 @@ test_that("add_tract_status identifies rows with tract GEOIDs", {
     expect_equal(out$.tract_state, c("DC", "DC", "DC"))
     expect_equal(out$.tract_year, c(2020, 2020, 2020))
 })
+
+test_that("id_tract validates keep_geometry", {
+    df <- tibble::tibble(
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    expect_error(
+        id_tract(
+            df,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            keep_geometry = NA
+        ),
+        "`keep_geometry` must be TRUE or FALSE"
+    )
+})
+
+test_that("id_tract validates cache", {
+    df <- tibble::tibble(
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    expect_error(
+        id_tract(
+            df,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            cache = NA
+        ),
+        "`cache` must be TRUE or FALSE"
+    )
+})

@@ -4,7 +4,15 @@
 \alias{id_tract}
 \title{Identify Census tracts for coordinate data}
 \usage{
-id_tract(.data, lat, lon, year = 2020, state = NULL, keep_geometry = FALSE)
+id_tract(
+  .data,
+  lat,
+  lon,
+  year = 2020,
+  state = NULL,
+  keep_geometry = FALSE,
+  cache = TRUE
+)
 }
 \arguments{
 \item{.data}{A data frame containing coordinate columns.}
@@ -22,6 +30,9 @@ versions. For this first version, \code{state} is required.}
 
 \item{keep_geometry}{Logical. If \code{TRUE}, returns an sf object. If \code{FALSE},
 returns a tibble.}
+
+\item{cache}{Logical. If \code{TRUE}, temporarily enables \code{tigris} caching for
+downloaded Census boundary files.}
 }
 \value{
 The input data with Census tract GEOID and tract metadata appended.

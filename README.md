@@ -74,6 +74,9 @@ tract_successes(dc_tract)
 tract_failures(dc_tract)
 ```
 
+By default, `id_tract()` enables `tigris` caching during the call so
+repeated tract lookups do not require repeated boundary downloads.
+
 ## Development roadmap
 
 Planned core functions include:

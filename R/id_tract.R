@@ -13,6 +13,8 @@
 #'   versions. For this first version, `state` is required.
 #' @param keep_geometry Logical. If `TRUE`, returns an sf object. If `FALSE`,
 #'   returns a tibble.
+#' @param cache Logical. If `TRUE`, temporarily enables `tigris` caching for
+#'   downloaded Census boundary files.
 #'
 #' @return The input data with Census tract GEOID and tract metadata appended.
 #'
@@ -33,10 +35,19 @@ id_tract <- function(
         lon,
         year = 2020,
         state = NULL,
-        keep_geometry = FALSE
+        keep_geometry = FALSE,
+        cache = TRUE
 ) {
     if (!is.data.frame(.data)) {
         stop("`.data` must be a data frame.", call. = FALSE)
+    }
+
+    if (!is.logical(keep_geometry) || length(keep_geometry) != 1 || is.na(keep_geometry)) {
+        stop("`keep_geometry` must be TRUE or FALSE.", call. = FALSE)
+    }
+
+    if (!is.logical(cache) || length(cache) != 1 || is.na(cache)) {
+        stop("`cache` must be TRUE or FALSE.", call. = FALSE)
     }
 
     if (is.null(state)) {
@@ -79,6 +90,17 @@ id_tract <- function(
         coords = c(lon_col, lat_col),
         crs = 4326,
         remove = FALSE
+    )
+
+    old_tigris_use_cache <- getOption("tigris_use_cache")
+
+    if (isTRUE(cache)) {
+        options(tigris_use_cache = TRUE)
+    }
+
+    on.exit(
+        options(tigris_use_cache = old_tigris_use_cache),
+        add = TRUE
     )
 
     tracts <- tigris::tracts(
