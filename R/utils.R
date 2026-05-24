@@ -67,7 +67,7 @@ check_geocode_result <- function(x) {
 
 add_tract_status <- function(x, state, year) {
     x$.tract_identified <- !is.na(x$tract_geoid)
-    x$.tract_state <- state
+    x$.tract_state <- paste(state, collapse = ", ")
     x$.tract_year <- year
 
     x
@@ -103,4 +103,28 @@ filter_status <- function(x, status_col, value) {
     }
 
     tibble::as_tibble(x[x[[status_col]] == value, , drop = FALSE])
+}
+
+get_tract_boundaries <- function(state, year, cache = TRUE) {
+    old_tigris_use_cache <- getOption("tigris_use_cache")
+
+    if (isTRUE(cache)) {
+        options(tigris_use_cache = TRUE)
+    }
+
+    on.exit(
+        options(tigris_use_cache = old_tigris_use_cache),
+        add = TRUE
+    )
+
+    tract_list <- lapply(state, function(s) {
+        tigris::tracts(
+            state = s,
+            year = year,
+            cb = TRUE,
+            class = "sf"
+        )
+    })
+
+    do.call(rbind, tract_list)
 }

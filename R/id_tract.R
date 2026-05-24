@@ -7,10 +7,9 @@
 #' @param lat Column containing latitude values.
 #' @param lon Column containing longitude values.
 #' @param year Census boundary year. Defaults to 2020.
-#' @param state Optional two-letter state abbreviation or state FIPS code used to
-#'   limit the Census tract boundary download. If `NULL`, tracts are downloaded
-#'   for all states represented by the coordinates' bounding box in future
-#'   versions. For this first version, `state` is required.
+#' @param state One or more two-letter state abbreviations or state FIPS codes
+#'   used to limit the Census tract boundary download. For this version,
+#'   `state` is required.
 #' @param keep_geometry Logical. If `TRUE`, returns an sf object. If `FALSE`,
 #'   returns a tibble.
 #' @param cache Logical. If `TRUE`, temporarily enables `tigris` caching for
@@ -52,10 +51,16 @@ id_tract <- function(
 
     if (is.null(state)) {
         stop(
-            "`state` is required in this first version of `id_tract()`.",
+            "`state` is required in this version of `id_tract()`.",
             call. = FALSE
         )
     }
+
+    if (!is.character(state) || length(state) < 1 || any(is.na(state)) || any(!nzchar(state))) {
+        stop("`state` must be a character vector of one or more states.", call. = FALSE)
+    }
+
+    state <- unique(state)
 
     lat_col <- col_arg_name(rlang::enquo(lat))
     lon_col <- col_arg_name(rlang::enquo(lon))
@@ -92,22 +97,10 @@ id_tract <- function(
         remove = FALSE
     )
 
-    old_tigris_use_cache <- getOption("tigris_use_cache")
-
-    if (isTRUE(cache)) {
-        options(tigris_use_cache = TRUE)
-    }
-
-    on.exit(
-        options(tigris_use_cache = old_tigris_use_cache),
-        add = TRUE
-    )
-
-    tracts <- tigris::tracts(
+    tracts <- get_tract_boundaries(
         state = state,
         year = year,
-        cb = TRUE,
-        class = "sf"
+        cache = cache
     )
 
     tracts <- sf::st_transform(tracts, sf::st_crs(points))

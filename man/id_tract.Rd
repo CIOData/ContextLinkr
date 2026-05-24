@@ -23,10 +23,9 @@ id_tract(
 
 \item{year}{Census boundary year. Defaults to 2020.}
 
-\item{state}{Optional two-letter state abbreviation or state FIPS code used to
-limit the Census tract boundary download. If \code{NULL}, tracts are downloaded
-for all states represented by the coordinates' bounding box in future
-versions. For this first version, \code{state} is required.}
+\item{state}{One or more two-letter state abbreviations or state FIPS codes
+used to limit the Census tract boundary download. For this version,
+\code{state} is required.}
 
 \item{keep_geometry}{Logical. If \code{TRUE}, returns an sf object. If \code{FALSE},
 returns a tibble.}

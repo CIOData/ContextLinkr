@@ -107,3 +107,37 @@ test_that("id_tract validates cache", {
         "`cache` must be TRUE or FALSE"
     )
 })
+
+test_that("id_tract validates state type", {
+    df <- tibble::tibble(
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    expect_error(
+        id_tract(
+            df,
+            lat = latitude,
+            lon = longitude,
+            state = 11
+        ),
+        "`state` must be a character vector"
+    )
+})
+
+test_that("id_tract validates missing state values", {
+    df <- tibble::tibble(
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    expect_error(
+        id_tract(
+            df,
+            lat = latitude,
+            lon = longitude,
+            state = c("DC", NA_character_)
+        ),
+        "`state` must be a character vector"
+    )
+})

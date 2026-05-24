@@ -75,6 +75,26 @@ tract_successes(dc_tract)
 tract_failures(dc_tract)
 ```
 
+`state` can contain one or more states when coordinates span multiple states.
+
+```{r eval=FALSE}
+regional_test <- tibble::tibble(
+  id = 1:2,
+  latitude = c(38.8977, 39.2904),
+  longitude = c(-77.0365, -76.6122)
+)
+
+regional_tracts <- id_tract(
+  regional_test,
+  lat = latitude,
+  lon = longitude,
+  state = c("DC", "MD")
+)
+
+regional_tracts
+tract_summary(regional_tracts)
+```
+
 By default, `id_tract()` enables `tigris` caching during the call so repeated
 tract lookups do not require repeated boundary downloads.
 
