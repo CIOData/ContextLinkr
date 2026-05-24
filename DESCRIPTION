@@ -15,9 +15,11 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     rlang,
+    sf,
     stringr,
     tibble,
-    tidygeocoder
+    tidygeocoder,
+    tigris
 Depends: 
     R (>= 3.5)
 LazyData: true
