@@ -70,6 +70,8 @@ dc_tract <- id_tract(
 
 dc_tract
 tract_summary(dc_tract)
+tract_successes(dc_tract)
+tract_failures(dc_tract)
 ```
 
 ## Development roadmap
