@@ -213,3 +213,120 @@ test_that("link_context() geocodes component address fields before tract lookup"
     expect_true(result$.geocoded)
     expect_true(result$.tract_identified)
 })
+
+test_that("link_context() accepts quoted coordinate column names", {
+    called_id_tract <- FALSE
+
+    testthat::local_mocked_bindings(
+        gc_address = function(...) {
+            stop("gc_address() should not be called")
+        },
+        id_tract = function(.data, lat, lon, state, year, keep_geometry, cache) {
+            called_id_tract <<- TRUE
+
+            expect_equal(lat, "latitude")
+            expect_equal(lon, "longitude")
+            expect_equal(state, "DC")
+
+            .data$tract_geoid <- "11001980000"
+            .data$.tract_identified <- TRUE
+            .data
+        }
+    )
+
+    result <- link_context(
+        tibble::tibble(
+            id = 1,
+            latitude = 38.8977,
+            longitude = -77.0365
+        ),
+        lat = "latitude",
+        lon = "longitude",
+        state = "DC"
+    )
+
+    expect_true(called_id_tract)
+    expect_equal(result$tract_geoid, "11001980000")
+    expect_true(result$.tract_identified)
+})
+
+test_that("link_context() accepts quoted full address column names", {
+    called_gc_address <- FALSE
+    called_id_tract <- FALSE
+
+    testthat::local_mocked_bindings(
+        gc_address = function(.data, address, geocoder, confirm_external) {
+            called_gc_address <<- TRUE
+
+            expect_equal(address, "address")
+            expect_equal(geocoder, "census_single")
+            expect_true(confirm_external)
+
+            .data$latitude <- 38.8977
+            .data$longitude <- -77.0365
+            .data$.geocoded <- TRUE
+            .data
+        },
+        id_tract = function(.data, lat, lon, state, year, keep_geometry, cache) {
+            called_id_tract <<- TRUE
+
+            expect_equal(lat, "latitude")
+            expect_equal(lon, "longitude")
+            expect_equal(state, "DC")
+
+            .data$tract_geoid <- "11001980000"
+            .data$.tract_identified <- TRUE
+            .data
+        }
+    )
+
+    result <- link_context(
+        tibble::tibble(
+            id = 1,
+            address = "1600 Pennsylvania Ave NW, Washington, DC 20500"
+        ),
+        address = "address",
+        state = "DC",
+        geocoder = "census_single",
+        confirm_external = TRUE
+    )
+
+    expect_true(called_gc_address)
+    expect_true(called_id_tract)
+    expect_true(result$.geocoded)
+    expect_true(result$.tract_identified)
+})
+
+test_that("link_context() forwards tract lookup arguments to id_tract()", {
+    testthat::local_mocked_bindings(
+        id_tract = function(.data, lat, lon, state, year, keep_geometry, cache) {
+            expect_equal(lat, "latitude")
+            expect_equal(lon, "longitude")
+            expect_equal(state, c("DC", "MD"))
+            expect_equal(year, 2022)
+            expect_true(keep_geometry)
+            expect_false(cache)
+
+            .data$tract_geoid <- "11001980000"
+            .data$.tract_identified <- TRUE
+            .data
+        }
+    )
+
+    result <- link_context(
+        tibble::tibble(
+            id = 1,
+            latitude = 38.8977,
+            longitude = -77.0365
+        ),
+        lat = latitude,
+        lon = longitude,
+        state = c("DC", "MD"),
+        year = 2022,
+        keep_geometry = TRUE,
+        cache = FALSE
+    )
+
+    expect_true(result$.tract_identified)
+    expect_equal(result$tract_geoid, "11001980000")
+})
