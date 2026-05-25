@@ -120,6 +120,12 @@ linked <- link_context(
 linked
 ```
 
+You can summarize the linked output with `link_summary()`:
+
+``` r
+link_summary(linked)
+```
+
 ## Development roadmap
 
 Planned core functions include:
