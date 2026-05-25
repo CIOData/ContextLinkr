@@ -3,7 +3,7 @@ test_that("tract_failures returns failed rows", {
         id = 1:3,
         tract_geoid = c("11001980000", NA_character_, "11001006202"),
         .tract_identified = c(TRUE, FALSE, TRUE),
-        .tract_state = c("DC", "DC", "DC"),
+        .tract_state_fips = c("11", "11", "11"),
         .tract_year = c(2020, 2020, 2020)
     )
 
@@ -19,7 +19,7 @@ test_that("tract_failures returns zero rows when all tracts identified", {
         id = 1:2,
         tract_geoid = c("11001980000", "11001006202"),
         .tract_identified = c(TRUE, TRUE),
-        .tract_state = c("DC", "DC"),
+        .tract_state_fips = c("11", "11"),
         .tract_year = c(2020, 2020)
     )
 

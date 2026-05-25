@@ -3,7 +3,7 @@ test_that("tract_summary returns a one-row tibble", {
         id = 1:3,
         tract_geoid = c("11001980000", NA_character_, "11001006202"),
         .tract_identified = c(TRUE, FALSE, TRUE),
-        .tract_state = c("DC", "DC", "DC"),
+        .tract_state_fips = c("11", NA_character_, "11"),
         .tract_year = c(2020, 2020, 2020)
     )
 
@@ -15,7 +15,7 @@ test_that("tract_summary returns a one-row tibble", {
     expect_equal(out$total, 3)
     expect_equal(out$identification_rate, 2 / 3)
     expect_equal(out$identification_rate_pct, 66.7)
-    expect_equal(out$state, "DC")
+    expect_equal(out$state_fips, "11")
     expect_equal(out$year, "2020")
 })
 

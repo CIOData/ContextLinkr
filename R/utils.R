@@ -65,9 +65,9 @@ check_geocode_result <- function(x) {
     invisible(x)
 }
 
-add_tract_status <- function(x, state, year) {
+add_tract_status <- function(x, year) {
     x$.tract_identified <- !is.na(x$tract_geoid)
-    x$.tract_state <- paste(state, collapse = ", ")
+    x$.tract_state_fips <- x$state_fips
     x$.tract_year <- year
 
     x

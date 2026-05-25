@@ -135,19 +135,6 @@ test_that("filter_status requires status column", {
     )
 })
 
-test_that("add_tract_status collapses multiple states", {
-    x <- tibble::tibble(
-        id = 1:2,
-        tract_geoid = c("11001980000", "24033800105")
-    )
-
-    out <- add_tract_status(x, state = c("DC", "MD"), year = 2020)
-
-    expect_equal(out$.tract_identified, c(TRUE, TRUE))
-    expect_equal(out$.tract_state, c("DC, MD", "DC, MD"))
-    expect_equal(out$.tract_year, c(2020, 2020))
-})
-
 test_that("normalize_states trims whitespace", {
     expect_equal(normalize_states(c(" DC ", "MD")), c("DC", "MD"))
 })

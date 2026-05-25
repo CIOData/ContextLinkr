@@ -12,7 +12,7 @@
 #'   id = 1:3,
 #'   tract_geoid = c("11001980000", NA_character_, "11001006202"),
 #'   .tract_identified = c(TRUE, FALSE, TRUE),
-#'   .tract_state = c("DC", "DC", "DC"),
+#'   .tract_state_fips = c("11", "11", "11"),
 #'   .tract_year = c(2020, 2020, 2020)
 #' )
 #'
@@ -31,7 +31,7 @@ tract_summary <- function(x) {
         total = total,
         identification_rate = identification_rate,
         identification_rate_pct = round(identification_rate * 100, 1),
-        state = paste(unique(x$.tract_state), collapse = ", "),
+        state_fips = paste(unique(stats::na.omit(x$.tract_state_fips)), collapse = ", "),
         year = paste(unique(x$.tract_year), collapse = ", ")
     )
 }

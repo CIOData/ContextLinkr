@@ -11,7 +11,7 @@
 #'   id = 1:3,
 #'   tract_geoid = c("11001980000", NA_character_, "11001006202"),
 #'   .tract_identified = c(TRUE, FALSE, TRUE),
-#'   .tract_state = c("DC", "DC", "DC"),
+#'   .tract_state_fips = c("11", "11", "11"),
 #'   .tract_year = c(2020, 2020, 2020)
 #' )
 #'
