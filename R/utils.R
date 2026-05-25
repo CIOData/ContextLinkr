@@ -162,3 +162,13 @@ validate_year <- function(year) {
 
     year
 }
+
+initialize_tract_columns <- function(x) {
+    x$tract_geoid <- NA_character_
+    x$state_fips <- NA_character_
+    x$county_fips <- NA_character_
+    x$tract_code <- NA_character_
+    x$tract_name <- NA_character_
+
+    x
+}

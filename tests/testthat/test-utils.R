@@ -195,3 +195,23 @@ test_that("validate_year rejects non-numeric year", {
         "`year` must be a single non-missing numeric value"
     )
 })
+
+test_that("initialize_tract_columns adds empty tract columns", {
+    x <- tibble::tibble(id = 1:2)
+
+    out <- initialize_tract_columns(x)
+
+    expect_true(all(c(
+        "tract_geoid",
+        "state_fips",
+        "county_fips",
+        "tract_code",
+        "tract_name"
+    ) %in% names(out)))
+
+    expect_true(all(is.na(out$tract_geoid)))
+    expect_true(all(is.na(out$state_fips)))
+    expect_true(all(is.na(out$county_fips)))
+    expect_true(all(is.na(out$tract_code)))
+    expect_true(all(is.na(out$tract_name)))
+})

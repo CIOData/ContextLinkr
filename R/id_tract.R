@@ -108,12 +108,7 @@ id_tract <- function(
     names(joined)[names(joined) == "TRACTCE"] <- "tract_code"
     names(joined)[names(joined) == "NAME"] <- "tract_name"
 
-    out <- df_input
-    out$tract_geoid <- NA_character_
-    out$state_fips <- NA_character_
-    out$county_fips <- NA_character_
-    out$tract_code <- NA_character_
-    out$tract_name <- NA_character_
+    out <- initialize_tract_columns(df_input)
 
     out[valid_coords, c(
         "tract_geoid",

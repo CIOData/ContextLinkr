@@ -77,6 +77,9 @@ tract_failures(dc_tract)
 
 `state` can contain one or more states when coordinates span multiple states.
 
+Rows with missing latitude or longitude are retained in the output but receive
+missing tract fields and `.tract_identified = FALSE`.
+
 ```{r eval=FALSE}
 regional_test <- tibble::tibble(
   id = 1:2,
