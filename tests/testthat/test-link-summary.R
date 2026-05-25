@@ -72,3 +72,25 @@ test_that("link_summary() works for geocoding-only results", {
     expect_true(is.na(result$tract_identification_rate))
     expect_true(is.na(result$tract_identification_rate_pct))
 })
+
+test_that("link_summary() handles zero-row linked results", {
+    linked <- tibble::tibble(
+        id = integer(),
+        .geocoded = logical(),
+        .tract_identified = logical(),
+        .tract_state_fips = character(),
+        .tract_year = numeric()
+    )
+
+    result <- link_summary(linked)
+
+    expect_equal(result$total, 0)
+    expect_equal(result$geocoded, 0)
+    expect_true(is.na(result$geocode_rate))
+    expect_true(is.na(result$geocode_rate_pct))
+    expect_equal(result$tract_identified, 0)
+    expect_true(is.na(result$tract_identification_rate))
+    expect_true(is.na(result$tract_identification_rate_pct))
+    expect_true(is.na(result$state_fips))
+    expect_true(is.na(result$year))
+})
