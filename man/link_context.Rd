@@ -73,6 +73,9 @@ identifying Census tracts.
 This function does not currently download or join contextual variables.
 It returns the input data with geocoding metadata, when geocoding is used,
 and tract identification fields from \code{\link[=id_tract]{id_tract()}}.
+
+Use \code{\link[=link_summary]{link_summary()}} to summarize geocoding and tract-identification
+performance after linking records.
 }
 \examples{
 \dontrun{
@@ -92,4 +95,7 @@ link_context(
 )
 }
 
+}
+\seealso{
+\code{\link[=gc_address]{gc_address()}}, \code{\link[=id_tract]{id_tract()}}, \code{\link[=link_summary]{link_summary()}}
 }
