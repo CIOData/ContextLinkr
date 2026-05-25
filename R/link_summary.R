@@ -10,6 +10,8 @@
 #' @return A one-row tibble with counts and rates for geocoding and tract
 #'   identification.
 #'
+#' @seealso [link_context()], [link_successes()], [link_failures()]
+#'
 #' @examples
 #' linked <- tibble::tibble(
 #'   id = 1:2,

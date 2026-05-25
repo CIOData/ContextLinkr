@@ -31,3 +31,6 @@ linked <- tibble::tibble(
 link_summary(linked)
 
 }
+\seealso{
+\code{\link[=link_context]{link_context()}}, \code{\link[=link_successes]{link_successes()}}, \code{\link[=link_failures]{link_failures()}}
+}

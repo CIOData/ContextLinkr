@@ -9,8 +9,8 @@
 #' It returns the input data with geocoding metadata, when geocoding is used,
 #' and tract identification fields from [id_tract()].
 #'
-#' Use [link_summary()] to summarize geocoding and tract-identification
-#' performance after linking records.
+#' Use [link_summary()], [link_successes()], and [link_failures()] to review
+#' linked output after geocoding and tract identification.
 #'
 #' @param .data A data frame containing individual-level records.
 #' @param address Optional full address column. Supports quoted or unquoted
@@ -39,7 +39,8 @@
 #' @return A data frame containing the original records plus geocoding and/or
 #'   Census tract fields.
 #'
-#' @seealso [gc_address()], [id_tract()], [link_summary()]
+#' @seealso [gc_address()], [id_tract()], [link_summary()],
+#'   [link_successes()], [link_failures()]
 #'
 #' @examples
 #' \dontrun{

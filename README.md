@@ -126,6 +126,17 @@ You can summarize the linked output with `link_summary()`:
 link_summary(linked)
 ```
 
+You can also separate successfully linked records from records that
+still need review:
+
+``` r
+linked_records <- link_successes(linked)
+records_to_review <- link_failures(linked)
+```
+
+These helpers are useful for basic QA after geocoding and tract
+identification.
+
 ## Development roadmap
 
 Planned core functions include:
