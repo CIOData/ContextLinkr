@@ -101,6 +101,25 @@ tract_summary(regional_tracts)
 By default, `id_tract()` enables `tigris` caching during the call so
 repeated tract lookups do not require repeated boundary downloads.
 
+## Link records to Census tracts
+
+`link_context()` provides an end-to-end wrapper for linking
+individual-level records to Census tract geography. If latitude and
+longitude columns are already available, `link_context()` skips
+geocoding and identifies Census tracts directly.
+
+``` r
+linked <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked
+```
+
 ## Development roadmap
 
 Planned core functions include:
