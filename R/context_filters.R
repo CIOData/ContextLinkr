@@ -17,7 +17,8 @@
 #'
 #' context_successes(joined)
 #'
-#' @seealso [join_context()], [link_summary()], [context_failures()]
+#' @seealso [join_context()], [context_summary()], [link_summary()],
+#'   [context_failures()]
 #'
 #' @export
 context_successes <- function(.data) {
@@ -54,7 +55,8 @@ context_successes <- function(.data) {
 #'
 #' context_failures(joined)
 #'
-#' @seealso [join_context()], [link_summary()], [context_successes()]
+#' @seealso [join_context()], [context_summary()], [link_summary()],
+#'   [context_successes()]
 #'
 #' @export
 context_failures <- function(.data) {

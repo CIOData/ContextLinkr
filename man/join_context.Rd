@@ -30,8 +30,8 @@ This function does not download contextual data. It is intended for workflows
 where contextual variables are already available, including future Cancer
 InFocus exports or other tract-level datasets.
 
-Use \code{\link[=link_summary]{link_summary()}} after joining to summarize how many linked records
-matched contextual data.
+Use \code{\link[=context_summary]{context_summary()}} or \code{\link[=link_summary]{link_summary()}} after joining to summarize how
+many linked records matched contextual data.
 }
 \examples{
 linked <- tibble::tibble(
@@ -48,6 +48,6 @@ join_context(linked, context)
 
 }
 \seealso{
-\code{\link[=link_context]{link_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=context_successes]{context_successes()}},
-\code{\link[=context_failures]{context_failures()}}
+\code{\link[=link_context]{link_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=context_summary]{context_summary()}},
+\code{\link[=context_successes]{context_successes()}}, \code{\link[=context_failures]{context_failures()}}
 }

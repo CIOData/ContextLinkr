@@ -161,8 +161,16 @@ and tests.
 The output includes `.context_joined`, which indicates whether each
 linked record matched a row in the contextual dataset.
 
-You can use `link_summary()` after `join_context()` to summarize
-contextual data join performance:
+You can summarize the context join specifically with
+`context_summary()`:
+
+``` r
+context_summary(joined)
+```
+
+You can also use `link_summary()` after `join_context()` to summarize
+the full workflow when geocoding, tract identification, and context join
+metadata are present:
 
 ``` r
 link_summary(joined)

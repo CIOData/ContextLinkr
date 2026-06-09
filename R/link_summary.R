@@ -10,8 +10,9 @@
 #' @return A one-row tibble with counts and rates for geocoding, tract
 #'   identification, and contextual data joins when available.
 #'
-#' @seealso [link_context()], [join_context()], [link_successes()],
-#'   [link_failures()], [context_successes()], [context_failures()]
+#' @seealso [link_context()], [join_context()], [context_summary()],
+#'   [link_successes()], [link_failures()], [context_successes()],
+#'   [context_failures()]
 #'
 #' @examples
 #' linked <- tibble::tibble(

@@ -7,8 +7,8 @@
 #' where contextual variables are already available, including future Cancer
 #' InFocus exports or other tract-level datasets.
 #'
-#' Use [link_summary()] after joining to summarize how many linked records
-#' matched contextual data.
+#' Use [context_summary()] or [link_summary()] after joining to summarize how
+#' many linked records matched contextual data.
 #'
 #' @param .data A data frame containing linked individual-level records.
 #' @param context A data frame containing contextual variables.
@@ -33,8 +33,8 @@
 #'
 #' join_context(linked, context)
 #'
-#' @seealso [link_context()], [link_summary()], [context_successes()],
-#'   [context_failures()]
+#' @seealso [link_context()], [link_summary()], [context_summary()],
+#'   [context_successes()], [context_failures()]
 #'
 #' @export
 join_context <- function(
