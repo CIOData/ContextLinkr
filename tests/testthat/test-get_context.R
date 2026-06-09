@@ -8,3 +8,14 @@ test_that("get_context() reports that retrieval is not yet implemented", {
         "planned but not yet implemented"
     )
 })
+
+test_that("get_context() validates requests before retrieval", {
+    expect_error(
+        get_context(
+            geographies = character(),
+            measures = "poverty",
+            geography = "tract"
+        ),
+        "`geographies` must contain at least one value"
+    )
+})

@@ -34,6 +34,13 @@ get_context <- function(
         geography = "tract",
         year = NULL
 ) {
+    validate_context_request(
+        geographies = geographies,
+        measures = measures,
+        geography = geography,
+        year = year
+    )
+
     rlang::abort(
         paste(
             "`get_context()` is planned but not yet implemented.",
