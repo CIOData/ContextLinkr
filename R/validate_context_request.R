@@ -40,6 +40,23 @@ validate_context_request <- function(
         if (any(measures == "")) {
             rlang::abort("`measures` must not contain empty strings.")
         }
+
+        available_measures <- available_context_measures()
+
+        unknown_measures <- setdiff(
+            measures,
+            available_measures$measure
+        )
+
+        if (length(unknown_measures) > 0) {
+            rlang::abort(
+                paste0(
+                    "`measures` contains unsupported value(s): ",
+                    paste(unknown_measures, collapse = ", "),
+                    "."
+                )
+            )
+        }
     }
 
     if (!is.character(geography) || length(geography) != 1 || is.na(geography)) {

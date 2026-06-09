@@ -125,3 +125,14 @@ test_that("validate_context_request() validates year", {
         )
     )
 })
+
+test_that("validate_context_request() rejects unsupported measures", {
+    expect_error(
+        validate_context_request(
+            geographies = "11001980000",
+            measures = "not_a_measure",
+            geography = "tract"
+        ),
+        "`measures` contains unsupported value"
+    )
+})
