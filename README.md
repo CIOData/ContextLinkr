@@ -159,6 +159,9 @@ joined <- join_context(
 joined
 ```
 
+The output includes `.context_joined`, which indicates whether each
+linked record matched a row in the contextual dataset.
+
 `join_context()` does not download contextual data. It joins contextual
 variables that are already available in memory.
 

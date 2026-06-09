@@ -18,7 +18,8 @@ non-key column names in \code{.data} and \code{context}.}
 }
 \value{
 A tibble containing \code{.data} with matching contextual variables
-joined from \code{context}.
+joined from \code{context} and a \code{.context_joined} column indicating whether
+each row matched a contextual record.
 }
 \description{
 \code{join_context()} joins individual-level records that have been linked to

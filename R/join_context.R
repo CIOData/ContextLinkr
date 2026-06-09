@@ -14,7 +14,8 @@
 #'   non-key column names in `.data` and `context`.
 #'
 #' @return A tibble containing `.data` with matching contextual variables
-#'   joined from `context`.
+#'   joined from `context` and a `.context_joined` column indicating whether
+#'   each row matched a contextual record.
 #'
 #' @examples
 #' linked <- tibble::tibble(
@@ -63,10 +64,16 @@ join_context <- function(
         rlang::abort("`suffix` must be a character vector of length 2.")
     }
 
+    if (".context_joined" %in% names(.data)) {
+        rlang::abort("`.data` must not already contain `.context_joined`.")
+    }
+
     data_key <- as.character(.data[[by]])
     context_key <- as.character(context[[by]])
 
-    duplicate_context_keys <- unique(context_key[duplicated(context_key) & !is.na(context_key)])
+    duplicate_context_keys <- unique(
+        context_key[duplicated(context_key) & !is.na(context_key)]
+    )
 
     if (length(duplicate_context_keys) > 0) {
         rlang::abort(
@@ -78,17 +85,47 @@ join_context <- function(
         )
     }
 
-    .data[[by]] <- data_key
-    context[[by]] <- context_key
+    context_non_key <- setdiff(names(context), by)
 
-    joined <- merge(
-        x = .data,
-        y = context,
-        by = by,
-        all.x = TRUE,
-        sort = FALSE,
-        suffixes = suffix
+    if (length(context_non_key) == 0) {
+        rlang::abort("`context` must contain at least one non-key column.")
+    }
+
+    duplicate_non_key <- intersect(names(.data), context_non_key)
+
+    data_out <- .data
+
+    if (length(duplicate_non_key) > 0 && suffix[[1]] != "") {
+        data_names <- names(data_out)
+        data_names[data_names %in% duplicate_non_key] <- paste0(
+            data_names[data_names %in% duplicate_non_key],
+            suffix[[1]]
+        )
+        names(data_out) <- data_names
+    }
+
+    context_out <- context[context_non_key]
+
+    if (length(duplicate_non_key) > 0) {
+        context_names <- names(context_out)
+        context_names[context_names %in% duplicate_non_key] <- paste0(
+            context_names[context_names %in% duplicate_non_key],
+            suffix[[2]]
+        )
+        names(context_out) <- context_names
+    }
+
+    row_match <- match(data_key, context_key)
+
+    joined_context <- context_out[row_match, , drop = FALSE]
+    rownames(joined_context) <- NULL
+
+    result <- cbind(
+        data_out,
+        tibble::as_tibble(joined_context)
     )
 
-    tibble::as_tibble(joined)
+    result[[".context_joined"]] <- !is.na(row_match) & !is.na(data_key)
+
+    tibble::as_tibble(result)
 }

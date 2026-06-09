@@ -88,6 +88,7 @@ test_that("join_context() joins contextual variables by tract_geoid", {
     expect_equal(result$id, 1:3)
     expect_equal(result$deprivation_index, c(0.8, 0.6, NA))
     expect_equal(result$rurality, c("urban", "urban", NA))
+    expect_equal(result$.context_joined, c(TRUE, TRUE, FALSE))
 })
 
 test_that("join_context() preserves unmatched linked records", {
@@ -105,6 +106,7 @@ test_that("join_context() preserves unmatched linked records", {
 
     expect_equal(nrow(result), 2)
     expect_equal(result$deprivation_index, c(0.8, NA))
+    expect_equal(result$.context_joined, c(TRUE, FALSE))
 })
 
 test_that("join_context() rejects duplicate context keys", {
@@ -159,4 +161,73 @@ test_that("join_context() handles duplicate non-key column names with suffixes",
     expect_true("source_context" %in% names(result))
     expect_equal(result$source, "individual")
     expect_equal(result$source_context, "context")
+})
+
+test_that("join_context() adds context join status", {
+    linked <- tibble::tibble(
+        id = 1:3,
+        tract_geoid = c("11001980000", "24510040100", NA)
+    )
+
+    context <- tibble::tibble(
+        tract_geoid = c("11001980000", "24510040100"),
+        deprivation_index = c(0.8, 0.6)
+    )
+
+    result <- join_context(linked, context)
+
+    expect_true(".context_joined" %in% names(result))
+    expect_equal(result$.context_joined, c(TRUE, TRUE, FALSE))
+})
+
+test_that("join_context() preserves input row order", {
+    linked <- tibble::tibble(
+        id = 1:3,
+        tract_geoid = c("24510040100", "11001980000", "99999999999")
+    )
+
+    context <- tibble::tibble(
+        tract_geoid = c("11001980000", "24510040100"),
+        deprivation_index = c(0.8, 0.6)
+    )
+
+    result <- join_context(linked, context)
+
+    expect_equal(result$id, 1:3)
+    expect_equal(result$deprivation_index, c(0.6, 0.8, NA))
+    expect_equal(result$.context_joined, c(TRUE, TRUE, FALSE))
+})
+
+test_that("join_context() requires at least one non-key context column", {
+    linked <- tibble::tibble(
+        id = 1,
+        tract_geoid = "11001980000"
+    )
+
+    context <- tibble::tibble(
+        tract_geoid = "11001980000"
+    )
+
+    expect_error(
+        join_context(linked, context),
+        "`context` must contain at least one non-key column"
+    )
+})
+
+test_that("join_context() rejects pre-existing .context_joined column", {
+    linked <- tibble::tibble(
+        id = 1,
+        tract_geoid = "11001980000",
+        .context_joined = FALSE
+    )
+
+    context <- tibble::tibble(
+        tract_geoid = "11001980000",
+        deprivation_index = 0.8
+    )
+
+    expect_error(
+        join_context(linked, context),
+        "`\\.data` must not already contain `\\.context_joined`"
+    )
 })
