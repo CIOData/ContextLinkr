@@ -144,20 +144,19 @@ After records have been linked to Census tract geography,
 individual-level records.
 
 ``` r
-context <- tibble::tibble(
-  tract_geoid = c("11001980000", "24510040100"),
-  deprivation_index = c(0.8, 0.6),
-  rurality = c("urban", "urban")
-)
-
 joined <- join_context(
   linked,
-  context,
+  sample_context,
   by = "tract_geoid"
 )
 
 joined
 ```
+
+`join_context()` does not download contextual data. It joins contextual
+variables that are already available in memory. The included
+`sample_context` dataset is a small illustrative dataset for examples
+and tests.
 
 The output includes `.context_joined`, which indicates whether each
 linked record matched a row in the contextual dataset.
@@ -176,9 +175,6 @@ from records that still need review:
 context_joined_records <- context_successes(joined)
 context_records_to_review <- context_failures(joined)
 ```
-
-`join_context()` does not download contextual data. It joins contextual
-variables that are already available in memory.
 
 ## Development roadmap
 
