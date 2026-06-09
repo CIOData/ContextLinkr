@@ -7,6 +7,9 @@
 #' where contextual variables are already available, including future Cancer
 #' InFocus exports or other tract-level datasets.
 #'
+#' Use [link_summary()] after joining to summarize how many linked records
+#' matched contextual data.
+#'
 #' @param .data A data frame containing linked individual-level records.
 #' @param context A data frame containing contextual variables.
 #' @param by Character string giving the join key. Defaults to `"tract_geoid"`.

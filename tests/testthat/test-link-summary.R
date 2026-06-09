@@ -8,7 +8,7 @@ test_that("link_summary() requires a data frame", {
 test_that("link_summary() requires link status columns", {
     expect_error(
         link_summary(tibble::tibble(id = 1)),
-        "requires `.geocoded` and/or `.tract_identified`"
+        "requires `.geocoded`, `.tract_identified`, and/or `.context_joined`"
     )
 })
 
@@ -93,4 +93,56 @@ test_that("link_summary() handles zero-row linked results", {
     expect_true(is.na(result$tract_identification_rate_pct))
     expect_true(is.na(result$state_fips))
     expect_true(is.na(result$year))
+})
+
+test_that("link_summary() summarizes context join status", {
+    joined <- tibble::tibble(
+        id = 1:3,
+        .geocoded = c(TRUE, TRUE, FALSE),
+        .tract_identified = c(TRUE, TRUE, FALSE),
+        .context_joined = c(TRUE, FALSE, FALSE),
+        .tract_state_fips = c("11", "11", NA),
+        .tract_year = c(2023, 2023, 2023)
+    )
+
+    result <- link_summary(joined)
+
+    expect_equal(result$total, 3)
+    expect_equal(result$geocoded, 2)
+    expect_equal(result$tract_identified, 2)
+    expect_equal(result$context_joined, 1)
+    expect_equal(result$context_join_rate, 1 / 3)
+    expect_equal(result$context_join_rate_pct, 33.3)
+})
+
+test_that("link_summary() works for context-only joined results", {
+    joined <- tibble::tibble(
+        id = 1:3,
+        .context_joined = c(TRUE, FALSE, FALSE)
+    )
+
+    result <- link_summary(joined)
+
+    expect_equal(result$total, 3)
+    expect_true(is.na(result$geocoded))
+    expect_true(is.na(result$geocode_rate))
+    expect_true(is.na(result$tract_identified))
+    expect_true(is.na(result$tract_identification_rate))
+    expect_equal(result$context_joined, 1)
+    expect_equal(result$context_join_rate, 1 / 3)
+    expect_equal(result$context_join_rate_pct, 33.3)
+})
+
+test_that("link_summary() handles zero-row context join results", {
+    joined <- tibble::tibble(
+        id = integer(),
+        .context_joined = logical()
+    )
+
+    result <- link_summary(joined)
+
+    expect_equal(result$total, 0)
+    expect_equal(result$context_joined, 0)
+    expect_true(is.na(result$context_join_rate))
+    expect_true(is.na(result$context_join_rate_pct))
 })

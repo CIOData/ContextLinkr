@@ -162,6 +162,13 @@ joined
 The output includes `.context_joined`, which indicates whether each
 linked record matched a row in the contextual dataset.
 
+You can use `link_summary()` after `join_context()` to summarize
+contextual data join performance:
+
+``` r
+link_summary(joined)
+```
+
 `join_context()` does not download contextual data. It joins contextual
 variables that are already available in memory.
 

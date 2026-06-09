@@ -11,13 +11,13 @@ link_summary(.data)
 ContextLinkr workflow containing \code{.geocoded} and/or \code{.tract_identified}.}
 }
 \value{
-A one-row tibble with counts and rates for geocoding and tract
-identification.
+A one-row tibble with counts and rates for geocoding, tract
+identification, and contextual data joins when available.
 }
 \description{
-\code{link_summary()} returns a one-row summary of results from \code{\link[=link_context]{link_context()}},
-including geocoding performance when geocoding was used and tract
-identification performance when tract lookup was performed.
+\code{link_summary()} returns a one-row summary of ContextLinkr workflow results,
+including geocoding performance, tract identification performance, and
+contextual data join performance when those metadata columns are present.
 }
 \examples{
 linked <- tibble::tibble(
@@ -32,5 +32,6 @@ link_summary(linked)
 
 }
 \seealso{
-\code{\link[=link_context]{link_context()}}, \code{\link[=link_successes]{link_successes()}}, \code{\link[=link_failures]{link_failures()}}
+\code{\link[=link_context]{link_context()}}, \code{\link[=join_context]{join_context()}}, \code{\link[=link_successes]{link_successes()}},
+\code{\link[=link_failures]{link_failures()}}
 }

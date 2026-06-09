@@ -29,6 +29,9 @@ Census tract geography with a user-supplied contextual dataset.
 This function does not download contextual data. It is intended for workflows
 where contextual variables are already available, including future Cancer
 InFocus exports or other tract-level datasets.
+
+Use \code{\link[=link_summary]{link_summary()}} after joining to summarize how many linked records
+matched contextual data.
 }
 \examples{
 linked <- tibble::tibble(

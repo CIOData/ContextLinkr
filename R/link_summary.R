@@ -1,16 +1,17 @@
 #' Summarize linked geographic context results
 #'
-#' `link_summary()` returns a one-row summary of results from [link_context()],
-#' including geocoding performance when geocoding was used and tract
-#' identification performance when tract lookup was performed.
+#' `link_summary()` returns a one-row summary of ContextLinkr workflow results,
+#' including geocoding performance, tract identification performance, and
+#' contextual data join performance when those metadata columns are present.
 #'
 #' @param .data A data frame returned by [link_context()] or another
 #'   ContextLinkr workflow containing `.geocoded` and/or `.tract_identified`.
 #'
-#' @return A one-row tibble with counts and rates for geocoding and tract
-#'   identification.
+#' @return A one-row tibble with counts and rates for geocoding, tract
+#'   identification, and contextual data joins when available.
 #'
-#' @seealso [link_context()], [link_successes()], [link_failures()]
+#' @seealso [link_context()], [join_context()], [link_successes()],
+#'   [link_failures()]
 #'
 #' @examples
 #' linked <- tibble::tibble(
@@ -31,12 +32,13 @@ link_summary <- function(.data) {
 
     has_geocode <- ".geocoded" %in% names(.data)
     has_tract <- ".tract_identified" %in% names(.data)
+    has_context <- ".context_joined" %in% names(.data)
 
-    if (!has_geocode && !has_tract) {
+    if (!has_geocode && !has_tract && !has_context) {
         rlang::abort(
             paste(
-                "`link_summary()` requires `.geocoded` and/or",
-                "`.tract_identified` columns."
+                "`link_summary()` requires `.geocoded`, `.tract_identified`,",
+                "and/or `.context_joined` columns."
             )
         )
     }
@@ -67,6 +69,18 @@ link_summary <- function(.data) {
         NA_real_
     }
 
+    context_joined <- if (has_context) {
+        sum(.data[[".context_joined"]], na.rm = TRUE)
+    } else {
+        NA_integer_
+    }
+
+    context_join_rate <- if (has_context && total > 0) {
+        context_joined / total
+    } else {
+        NA_real_
+    }
+
     state_fips <- if (".tract_state_fips" %in% names(.data)) {
         unique_values(.data[[".tract_state_fips"]])
     } else {
@@ -87,6 +101,9 @@ link_summary <- function(.data) {
         tract_identified = tract_identified,
         tract_identification_rate = tract_identification_rate,
         tract_identification_rate_pct = round(tract_identification_rate * 100, 1),
+        context_joined = context_joined,
+        context_join_rate = context_join_rate,
+        context_join_rate_pct = round(context_join_rate * 100, 1),
         state_fips = state_fips,
         year = year
     )
