@@ -7,9 +7,10 @@ output: github_document
 ContextLinkr is an R package for linking individual-level records to geographic
 contextual data for multilevel health research.
 
-The package is currently in early development. The first implemented function is
-`gc_address()`, which geocodes address data using configurable geocoding
-services.
+The package currently supports address geocoding, Census tract identification,
+end-to-end record linkage, and joining linked records to user-supplied
+contextual datasets. Future development will add optional retrieval of selected
+contextual data sources.
 
 ## Installation
 
@@ -200,10 +201,17 @@ missing_context_keys(linked, sample_context)
 
 ## Development roadmap
 
-Planned core functions include:
+Implemented core functions include:
 
 - `gc_address()` — geocode address data.
 - `id_tract()` — identify Census tracts containing coordinates.
-- `get_context()` — retrieve contextual variables from Cancer InFocus.
-- `link_context()` — join individual records to contextual variables through a
-  wrapper workflow.
+- `link_context()` — link individual-level records to Census tract geography.
+- `join_context()` — join linked records to user-supplied contextual data.
+- Summary and filter helpers for geocoding, tract identification, linkage, and
+  contextual joins.
+
+Planned future development includes:
+
+- Optional retrieval of selected contextual data sources.
+- Additional examples and articles for common linkage workflows.
+- Expanded QA helpers for reviewing incomplete linkage and context joins.

@@ -1,0 +1,171 @@
+---
+title: "Joining User-Supplied Contextual Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Joining User-Supplied Contextual Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+
+ContextLinkr links individual-level records to geographic contextual data for
+multilevel health research.
+
+This vignette demonstrates the workflow for joining linked records to a
+user-supplied contextual dataset. The workflow assumes contextual variables are
+already available in memory. ContextLinkr does not download contextual data in
+this step.
+
+The basic workflow is:
+
+1. Link individual-level records to Census tract geography.
+2. Join tract-level contextual variables to the linked records.
+3. Summarize context join completeness.
+4. Separate successful joins from records that need review.
+5. Identify linked tract GEOIDs that are missing from the contextual dataset.
+
+# Example data
+
+ContextLinkr includes two small example datasets:
+
+- `sample_addresses`: example individual-level address records.
+- `sample_context`: example tract-level contextual variables.
+
+```{r}
+library(ContextLinkr)
+
+sample_addresses
+sample_context
+```
+
+# Link records to Census tracts
+
+In a full workflow, `link_context()` can geocode address records and identify
+Census tracts. Because geocoding may send address information to external
+services, users must explicitly confirm that they have permission to geocode
+those records.
+
+This example is not evaluated in the vignette because it may require external
+services and downloaded tract boundaries.
+
+```{r eval = FALSE}
+linked <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked
+link_summary(linked)
+```
+
+For the remaining examples, we will create a small linked dataset directly.
+This keeps the vignette lightweight and avoids external service calls.
+
+```{r}
+linked <- tibble::tibble(
+  id = 1:4,
+  tract_geoid = c(
+    "11001980000",
+    "11001980100",
+    "11001980200",
+    "99999999999"
+  )
+)
+
+linked
+```
+
+# Join contextual variables
+
+Use `join_context()` to join tract-level contextual variables to linked records.
+
+```{r}
+joined <- join_context(
+  linked,
+  sample_context,
+  by = "tract_geoid"
+)
+
+joined
+```
+
+The output preserves the individual-level records and adds contextual variables
+from `sample_context`. It also adds `.context_joined`, which indicates whether
+each linked record matched a row in the contextual dataset.
+
+# Summarize context join completeness
+
+Use `context_summary()` to summarize the context join.
+
+```{r}
+context_summary(joined)
+```
+
+If geocoding and tract-identification metadata are also present, `link_summary()`
+can summarize the broader linkage workflow.
+
+```{r}
+link_summary(joined)
+```
+
+# Extract successful and unsuccessful context joins
+
+Use `context_successes()` to retain records that matched contextual data.
+
+```{r}
+context_successes(joined)
+```
+
+Use `context_failures()` to retain records that did not match contextual data.
+
+```{r}
+context_failures(joined)
+```
+
+# Identify missing contextual keys
+
+Use `missing_context_keys()` to list tract GEOIDs that appear in the linked
+records but are absent from the contextual dataset.
+
+```{r}
+missing_context_keys(linked, sample_context)
+```
+
+This is useful for quality assurance before or after joining contextual data.
+
+# Different key names
+
+If the linked records and contextual dataset use different join-key names, pass
+a named character vector to `by`. The name is the key in the linked records, and
+the value is the key in the contextual dataset.
+
+```{r}
+context_alt_key <- sample_context
+names(context_alt_key)[names(context_alt_key) == "tract_geoid"] <- "GEOID"
+
+joined_alt_key <- join_context(
+  linked,
+  context_alt_key,
+  by = c("tract_geoid" = "GEOID")
+)
+
+joined_alt_key
+```
+
+# Notes for sensitive data
+
+Users working with protected, sensitive, or restricted data should complete
+geocoding and geographic linkage only in approved computing environments.
+ContextLinkr is designed so users can join contextual data after geographic
+linkage has already occurred.
