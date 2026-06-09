@@ -29,6 +29,6 @@ context_summary(joined)
 
 }
 \seealso{
-\code{\link[=join_context]{join_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=context_successes]{context_successes()}},
-\code{\link[=context_failures]{context_failures()}}
+\code{\link[=join_context]{join_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=missing_context_keys]{missing_context_keys()}},
+\code{\link[=context_successes]{context_successes()}}, \code{\link[=context_failures]{context_failures()}}
 }

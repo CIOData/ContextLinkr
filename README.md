@@ -196,6 +196,13 @@ context_joined_records <- context_successes(joined)
 context_records_to_review <- context_failures(joined)
 ```
 
+You can also list tract GEOIDs that appear in the linked records but are
+missing from the contextual data:
+
+``` r
+missing_context_keys(linked, sample_context)
+```
+
 ## Development roadmap
 
 Planned core functions include:

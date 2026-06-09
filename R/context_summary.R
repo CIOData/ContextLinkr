@@ -18,8 +18,8 @@
 #'
 #' context_summary(joined)
 #'
-#' @seealso [join_context()], [link_summary()], [context_successes()],
-#'   [context_failures()]
+#' @seealso [join_context()], [link_summary()], [missing_context_keys()],
+#'   [context_successes()], [context_failures()]
 #'
 #' @export
 context_summary <- function(.data) {

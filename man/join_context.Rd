@@ -53,5 +53,5 @@ join_context(linked, context)
 }
 \seealso{
 \code{\link[=link_context]{link_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=context_summary]{context_summary()}},
-\code{\link[=context_successes]{context_successes()}}, \code{\link[=context_failures]{context_failures()}}
+\code{\link[=missing_context_keys]{missing_context_keys()}}, \code{\link[=context_successes]{context_successes()}}, \code{\link[=context_failures]{context_failures()}}
 }
