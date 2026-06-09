@@ -19,6 +19,10 @@ joined to contextual data.
 performance. For results from \code{\link[=join_context]{join_context()}}, it summarizes the
 \code{.context_joined} metadata column.
 }
+\details{
+When available, \code{context_summary()} uses the
+\code{contextlinkr_context_summary} attribute created by \code{\link[=join_context]{join_context()}}.
+}
 \examples{
 joined <- tibble::tibble(
   id = 1:3,

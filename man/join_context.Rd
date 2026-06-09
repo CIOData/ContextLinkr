@@ -36,6 +36,10 @@ InFocus exports or other tract-level datasets.
 
 Use \code{\link[=context_summary]{context_summary()}} or \code{\link[=link_summary]{link_summary()}} after joining to summarize how
 many linked records matched contextual data.
+
+The output includes a \code{.context_joined} column and a
+\code{contextlinkr_context_summary} attribute summarizing contextual join
+performance.
 }
 \examples{
 linked <- tibble::tibble(

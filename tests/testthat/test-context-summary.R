@@ -54,3 +54,24 @@ test_that("context_summary() handles zero-row inputs", {
     expect_true(is.na(result$join_rate))
     expect_true(is.na(result$join_rate_pct))
 })
+
+test_that("context_summary() uses context summary attribute when available", {
+    joined <- tibble::tibble(
+        id = 1:3,
+        .context_joined = c(TRUE, FALSE, FALSE)
+    )
+
+    attr(joined, "contextlinkr_context_summary") <- list(
+        joined = 2,
+        total = 4,
+        join_rate = 0.5,
+        by = "tract_geoid"
+    )
+
+    result <- context_summary(joined)
+
+    expect_equal(result$joined, 2)
+    expect_equal(result$total, 4)
+    expect_equal(result$join_rate, 0.5)
+    expect_equal(result$join_rate_pct, 50)
+})

@@ -307,3 +307,25 @@ test_that("join_context() rejects empty named join keys", {
         "`by` must specify non-empty join key names"
     )
 })
+
+test_that("join_context() stores context join summary attribute", {
+    linked <- tibble::tibble(
+        id = 1:3,
+        tract_geoid = c("11001980000", "24510040100", "99999999999")
+    )
+
+    context <- tibble::tibble(
+        tract_geoid = c("11001980000", "24510040100"),
+        deprivation_index = c(0.8, 0.6)
+    )
+
+    result <- join_context(linked, context)
+
+    summary_attr <- attr(result, "contextlinkr_context_summary", exact = TRUE)
+
+    expect_type(summary_attr, "list")
+    expect_equal(summary_attr$joined, 2)
+    expect_equal(summary_attr$total, 3)
+    expect_equal(summary_attr$join_rate, 2 / 3)
+    expect_equal(summary_attr$by, "tract_geoid")
+})

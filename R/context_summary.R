@@ -4,6 +4,9 @@
 #' performance. For results from [join_context()], it summarizes the
 #' `.context_joined` metadata column.
 #'
+#' When available, `context_summary()` uses the
+#' `contextlinkr_context_summary` attribute created by [join_context()].
+#'
 #' @param .data A data frame returned by [join_context()] or another
 #'   ContextLinkr workflow containing `.context_joined`.
 #'
@@ -31,13 +34,21 @@ context_summary <- function(.data) {
         rlang::abort("`.data` must contain a `.context_joined` column.")
     }
 
-    total <- nrow(.data)
-    joined <- sum(.data[[".context_joined"]], na.rm = TRUE)
+    summary_attr <- attr(.data, "contextlinkr_context_summary", exact = TRUE)
 
-    join_rate <- if (total > 0) {
-        joined / total
+    if (!is.null(summary_attr)) {
+        joined <- summary_attr$joined
+        total <- summary_attr$total
+        join_rate <- summary_attr$join_rate
     } else {
-        NA_real_
+        total <- nrow(.data)
+        joined <- sum(.data[[".context_joined"]], na.rm = TRUE)
+
+        join_rate <- if (total > 0) {
+            joined / total
+        } else {
+            NA_real_
+        }
     }
 
     tibble::tibble(

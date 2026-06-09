@@ -10,6 +10,10 @@
 #' Use [context_summary()] or [link_summary()] after joining to summarize how
 #' many linked records matched contextual data.
 #'
+#' The output includes a `.context_joined` column and a
+#' `contextlinkr_context_summary` attribute summarizing contextual join
+#' performance.
+#'
 #' @param .data A data frame containing linked individual-level records.
 #' @param context A data frame containing contextual variables.
 #' @param by Join key specification. A single character string joins columns
@@ -136,7 +140,20 @@ join_context <- function(
 
     result[[".context_joined"]] <- !is.na(row_match) & !is.na(data_key)
 
-    tibble::as_tibble(result)
+    result <- tibble::as_tibble(result)
+
+    attr(result, "contextlinkr_context_summary") <- list(
+        joined = sum(result[[".context_joined"]], na.rm = TRUE),
+        total = nrow(result),
+        join_rate = if (nrow(result) > 0) {
+            sum(result[[".context_joined"]], na.rm = TRUE) / nrow(result)
+        } else {
+            NA_real_
+        },
+        by = by
+    )
+
+    result
 }
 
 parse_join_by <- function(by) {
