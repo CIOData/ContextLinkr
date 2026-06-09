@@ -33,8 +33,8 @@
 #'
 #' join_context(linked, context)
 #'
-#' @seealso [link_context()], [link_summary()], [link_successes()],
-#'   [link_failures()]
+#' @seealso [link_context()], [link_summary()], [context_successes()],
+#'   [context_failures()]
 #'
 #' @export
 join_context <- function(

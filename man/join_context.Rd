@@ -48,6 +48,6 @@ join_context(linked, context)
 
 }
 \seealso{
-\code{\link[=link_context]{link_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=link_successes]{link_successes()}},
-\code{\link[=link_failures]{link_failures()}}
+\code{\link[=link_context]{link_context()}}, \code{\link[=link_summary]{link_summary()}}, \code{\link[=context_successes]{context_successes()}},
+\code{\link[=context_failures]{context_failures()}}
 }

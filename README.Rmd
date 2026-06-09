@@ -166,6 +166,14 @@ data join performance:
 link_summary(joined)
 ```
 
+You can also separate records that successfully matched contextual data from
+records that still need review:
+
+```{r context-filters, eval=FALSE}
+context_joined_records <- context_successes(joined)
+context_records_to_review <- context_failures(joined)
+```
+
 `join_context()` does not download contextual data. It joins contextual variables
 that are already available in memory.
 

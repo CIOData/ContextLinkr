@@ -33,5 +33,5 @@ link_summary(linked)
 }
 \seealso{
 \code{\link[=link_context]{link_context()}}, \code{\link[=join_context]{join_context()}}, \code{\link[=link_successes]{link_successes()}},
-\code{\link[=link_failures]{link_failures()}}
+\code{\link[=link_failures]{link_failures()}}, \code{\link[=context_successes]{context_successes()}}, \code{\link[=context_failures]{context_failures()}}
 }

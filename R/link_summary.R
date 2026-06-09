@@ -11,7 +11,7 @@
 #'   identification, and contextual data joins when available.
 #'
 #' @seealso [link_context()], [join_context()], [link_successes()],
-#'   [link_failures()]
+#'   [link_failures()], [context_successes()], [context_failures()]
 #'
 #' @examples
 #' linked <- tibble::tibble(
