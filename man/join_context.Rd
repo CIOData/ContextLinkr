@@ -11,7 +11,11 @@ join_context(.data, context, by = "tract_geoid", suffix = c("", "_context"))
 
 \item{context}{A data frame containing contextual variables.}
 
-\item{by}{Character string giving the join key. Defaults to \code{"tract_geoid"}.}
+\item{by}{Join key specification. A single character string joins columns
+with the same name in \code{.data} and \code{context}. A named character vector of
+length one joins different column names, where the name is the column in
+\code{.data} and the value is the column in \code{context}, for example
+\code{c("tract_geoid" = "GEOID")}.}
 
 \item{suffix}{Character vector of length 2 used to disambiguate duplicate
 non-key column names in \code{.data} and \code{context}.}

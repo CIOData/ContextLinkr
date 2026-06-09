@@ -33,17 +33,17 @@ test_that("join_context() validates by", {
 
     expect_error(
         join_context(linked, context, by = character()),
-        "`by` must be a single non-missing character string"
+        "`by` must be a single non-missing character string or a named"
     )
 
     expect_error(
         join_context(linked, context, by = NA_character_),
-        "`by` must be a single non-missing character string"
+        "`by` must be a single non-missing character string or a named"
     )
 
     expect_error(
         join_context(linked, context, by = ""),
-        "`by` must be a single non-missing character string"
+        "`by` must specify non-empty join key names"
     )
 })
 
@@ -229,5 +229,81 @@ test_that("join_context() rejects pre-existing .context_joined column", {
     expect_error(
         join_context(linked, context),
         "`\\.data` must not already contain `\\.context_joined`"
+    )
+})
+
+test_that("join_context() supports different data and context join key names", {
+    linked <- tibble::tibble(
+        id = 1:3,
+        tract_geoid = c("11001980000", "24510040100", "99999999999")
+    )
+
+    context <- tibble::tibble(
+        GEOID = c("11001980000", "24510040100"),
+        deprivation_index = c(0.8, 0.6)
+    )
+
+    result <- join_context(
+        linked,
+        context,
+        by = c("tract_geoid" = "GEOID")
+    )
+
+    expect_equal(result$id, 1:3)
+    expect_equal(result$tract_geoid, linked$tract_geoid)
+    expect_false("GEOID" %in% names(result))
+    expect_equal(result$deprivation_index, c(0.8, 0.6, NA))
+    expect_equal(result$.context_joined, c(TRUE, TRUE, FALSE))
+})
+
+test_that("join_context() validates named join key columns", {
+    linked <- tibble::tibble(
+        id = 1,
+        tract_geoid = "11001980000"
+    )
+
+    context <- tibble::tibble(
+        GEOID = "11001980000",
+        deprivation_index = 0.8
+    )
+
+    expect_error(
+        join_context(linked, context, by = c("missing_key" = "GEOID")),
+        "`\\.data` must contain the join key `missing_key`"
+    )
+
+    expect_error(
+        join_context(linked, context, by = c("tract_geoid" = "missing_key")),
+        "`context` must contain the join key `missing_key`"
+    )
+})
+
+test_that("join_context() rejects empty named join keys", {
+    linked <- tibble::tibble(
+        id = 1,
+        tract_geoid = "11001980000"
+    )
+
+    context <- tibble::tibble(
+        GEOID = "11001980000",
+        deprivation_index = 0.8
+    )
+
+    expect_error(
+        join_context(
+            linked,
+            context,
+            by = stats::setNames("GEOID", "")
+        ),
+        "`by` must specify non-empty join key names"
+    )
+
+    expect_error(
+        join_context(
+            linked,
+            context,
+            by = c("tract_geoid" = "")
+        ),
+        "`by` must specify non-empty join key names"
     )
 })

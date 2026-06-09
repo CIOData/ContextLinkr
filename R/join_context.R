@@ -12,7 +12,11 @@
 #'
 #' @param .data A data frame containing linked individual-level records.
 #' @param context A data frame containing contextual variables.
-#' @param by Character string giving the join key. Defaults to `"tract_geoid"`.
+#' @param by Join key specification. A single character string joins columns
+#'   with the same name in `.data` and `context`. A named character vector of
+#'   length one joins different column names, where the name is the column in
+#'   `.data` and the value is the column in `context`, for example
+#'   `c("tract_geoid" = "GEOID")`.
 #' @param suffix Character vector of length 2 used to disambiguate duplicate
 #'   non-key column names in `.data` and `context`.
 #'
@@ -51,16 +55,18 @@ join_context <- function(
         rlang::abort("`context` must be a data frame.")
     }
 
-    if (!is.character(by) || length(by) != 1 || is.na(by) || by == "") {
-        rlang::abort("`by` must be a single non-missing character string.")
+    join_by <- parse_join_by(by)
+    data_by <- join_by$data_by
+    context_by <- join_by$context_by
+
+    if (!data_by %in% names(.data)) {
+        rlang::abort(paste0("`.data` must contain the join key `", data_by, "`."))
     }
 
-    if (!by %in% names(.data)) {
-        rlang::abort(paste0("`.data` must contain the join key `", by, "`."))
-    }
-
-    if (!by %in% names(context)) {
-        rlang::abort(paste0("`context` must contain the join key `", by, "`."))
+    if (!context_by %in% names(context)) {
+        rlang::abort(
+            paste0("`context` must contain the join key `", context_by, "`.")
+        )
     }
 
     if (!is.character(suffix) || length(suffix) != 2 || anyNA(suffix)) {
@@ -71,8 +77,8 @@ join_context <- function(
         rlang::abort("`.data` must not already contain `.context_joined`.")
     }
 
-    data_key <- as.character(.data[[by]])
-    context_key <- as.character(context[[by]])
+    data_key <- as.character(.data[[data_by]])
+    context_key <- as.character(context[[context_by]])
 
     duplicate_context_keys <- unique(
         context_key[duplicated(context_key) & !is.na(context_key)]
@@ -82,13 +88,13 @@ join_context <- function(
         rlang::abort(
             paste0(
                 "`context` must contain no duplicate values in `",
-                by,
+                context_by,
                 "`."
             )
         )
     }
 
-    context_non_key <- setdiff(names(context), by)
+    context_non_key <- setdiff(names(context), context_by)
 
     if (length(context_non_key) == 0) {
         rlang::abort("`context` must contain at least one non-key column.")
@@ -131,4 +137,42 @@ join_context <- function(
     result[[".context_joined"]] <- !is.na(row_match) & !is.na(data_key)
 
     tibble::as_tibble(result)
+}
+
+parse_join_by <- function(by) {
+    if (!is.character(by) || length(by) != 1 || is.na(by)) {
+        rlang::abort(
+            paste(
+                "`by` must be a single non-missing character string or a named",
+                "character vector of length one."
+            )
+        )
+    }
+
+    by_names <- names(by)
+
+    if (!is.null(by_names)) {
+        data_by <- by_names[[1]]
+        context_by <- unname(by)[[1]]
+    } else {
+        data_by <- by[[1]]
+        context_by <- by[[1]]
+    }
+
+    if (
+        is.na(data_by) || data_by == "" ||
+        is.na(context_by) || context_by == ""
+    ) {
+        rlang::abort(
+            paste(
+                "`by` must specify non-empty join key names for both `.data`",
+                "and `context`."
+            )
+        )
+    }
+
+    list(
+        data_by = data_by,
+        context_by = context_by
+    )
 }

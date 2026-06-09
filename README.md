@@ -158,6 +158,18 @@ variables that are already available in memory. The included
 `sample_context` dataset is a small illustrative dataset for examples
 and tests.
 
+If the join key has different names in the linked records and contextual
+data, use a named character vector. The name identifies the key in the
+linked records, and the value identifies the key in the contextual data:
+
+``` r
+joined <- join_context(
+  linked,
+  context,
+  by = c("tract_geoid" = "GEOID")
+)
+```
+
 The output includes `.context_joined`, which indicates whether each
 linked record matched a row in the contextual dataset.
 
