@@ -330,3 +330,63 @@ test_that("link_context() forwards tract lookup arguments to id_tract()", {
     expect_true(result$.tract_identified)
     expect_equal(result$tract_geoid, "11001980000")
 })
+
+test_that("link_context() validates include_context", {
+    expect_error(
+        link_context(
+            sample_addresses,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            include_context = NA
+        ),
+        "`include_context` must be a single non-missing logical value"
+    )
+
+    expect_error(
+        link_context(
+            sample_addresses,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            include_context = c(TRUE, FALSE)
+        ),
+        "`include_context` must be a single non-missing logical value"
+    )
+})
+
+test_that("link_context() validates context_format", {
+    expect_error(
+        link_context(
+            sample_addresses,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            context_format = "tidy"
+        ),
+        "`format` must be one of"
+    )
+})
+
+test_that("link_context() can include Cancer InFocus context", {
+    skip_if_no_cif_integration()
+
+    records <- tibble::tibble(
+        id = 1,
+        latitude = 38.8977,
+        longitude = -77.0365
+    )
+
+    result <- link_context(
+        records,
+        lat = latitude,
+        lon = longitude,
+        state = "DC",
+        include_context = TRUE,
+        context_measures = "Total Population"
+    )
+
+    expect_s3_class(result, "tbl_df")
+    expect_true("Total Population" %in% names(result))
+    expect_true(".context_joined" %in% names(result))
+})

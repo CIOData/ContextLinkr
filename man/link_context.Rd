@@ -18,6 +18,9 @@ link_context(
   confirm_external = FALSE,
   year = 2023,
   keep_geometry = FALSE,
+  context_measures = NULL,
+  context_format = "wide",
+  include_context = FALSE,
   cache = TRUE
 )
 }
@@ -56,12 +59,26 @@ to an external geocoding service.}
 \item{keep_geometry}{Logical. Whether to keep tract geometry in the output.
 Passed to \code{\link[=id_tract]{id_tract()}}.}
 
+\item{context_measures}{Optional character vector of Cancer InFocus measure
+definitions to retrieve when \code{include_context = TRUE}. If \code{NULL}, all
+available measures may be retrieved.}
+
+\item{context_format}{Output format requested from \code{\link[=get_context]{get_context()}} when
+\code{include_context = TRUE}. Defaults to \code{"wide"} because linked
+individual-level records generally require one row per geography for
+joining.}
+
+\item{include_context}{Logical. If \code{TRUE}, retrieve Cancer InFocus
+contextual variables for successfully linked Census tracts and join them
+back to the linked records. Defaults to \code{FALSE}.}
+
 \item{cache}{Logical. Whether to use tigris caching during tract lookup.
 Passed to \code{\link[=id_tract]{id_tract()}}.}
 }
 \value{
-A data frame containing the original records plus geocoding and/or
-Census tract fields.
+A tibble containing the original records plus geocoding and/or
+Census tract fields. If \code{include_context = TRUE}, the output also includes
+selected Cancer InFocus contextual variables and context-join metadata.
 }
 \description{
 \code{link_context()} is an end-to-end convenience wrapper for linking
@@ -70,9 +87,10 @@ existing latitude/longitude columns or geocode address fields before
 identifying Census tracts.
 }
 \details{
-This function does not currently download or join contextual variables.
-It returns the input data with geocoding metadata, when geocoding is used,
-and tract identification fields from \code{\link[=id_tract]{id_tract()}}.
+By default, this function returns the input data with geocoding metadata,
+when geocoding is used, and tract identification fields from \code{\link[=id_tract]{id_tract()}}.
+If \code{include_context = TRUE}, it retrieves selected Cancer InFocus contextual
+variables and joins them to the linked records.
 
 Use \code{\link[=link_summary]{link_summary()}}, \code{\link[=link_successes]{link_successes()}}, and \code{\link[=link_failures]{link_failures()}} to review
 linked output after geocoding and tract identification.

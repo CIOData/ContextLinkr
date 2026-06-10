@@ -5,9 +5,10 @@
 #' existing latitude/longitude columns or geocode address fields before
 #' identifying Census tracts.
 #'
-#' This function does not currently download or join contextual variables.
-#' It returns the input data with geocoding metadata, when geocoding is used,
-#' and tract identification fields from [id_tract()].
+#' By default, this function returns the input data with geocoding metadata,
+#' when geocoding is used, and tract identification fields from [id_tract()].
+#' If `include_context = TRUE`, it retrieves selected Cancer InFocus contextual
+#' variables and joins them to the linked records.
 #'
 #' Use [link_summary()], [link_successes()], and [link_failures()] to review
 #' linked output after geocoding and tract identification.
@@ -33,11 +34,22 @@
 #' @param year Census tract boundary year passed to [id_tract()].
 #' @param keep_geometry Logical. Whether to keep tract geometry in the output.
 #'   Passed to [id_tract()].
+#' @param include_context Logical. If `TRUE`, retrieve Cancer InFocus
+#'   contextual variables for successfully linked Census tracts and join them
+#'   back to the linked records. Defaults to `FALSE`.
+#' @param context_measures Optional character vector of Cancer InFocus measure
+#'   definitions to retrieve when `include_context = TRUE`. If `NULL`, all
+#'   available measures may be retrieved.
+#' @param context_format Output format requested from [get_context()] when
+#'   `include_context = TRUE`. Defaults to `"wide"` because linked
+#'   individual-level records generally require one row per geography for
+#'   joining.
 #' @param cache Logical. Whether to use tigris caching during tract lookup.
 #'   Passed to [id_tract()].
 #'
-#' @return A data frame containing the original records plus geocoding and/or
-#'   Census tract fields.
+#' @return A tibble containing the original records plus geocoding and/or
+#'   Census tract fields. If `include_context = TRUE`, the output also includes
+#'   selected Cancer InFocus contextual variables and context-join metadata.
 #'
 #' @seealso [gc_address()], [id_tract()], [link_summary()],
 #'   [link_successes()], [link_failures()]
@@ -75,6 +87,9 @@ link_context <- function(
         confirm_external = FALSE,
         year = 2023,
         keep_geometry = FALSE,
+        context_measures = NULL,
+        context_format = "wide",
+        include_context = FALSE,
         cache = TRUE
 ) {
     if (!is.data.frame(.data)) {
@@ -84,6 +99,12 @@ link_context <- function(
     if (missing(state) || is.null(state)) {
         rlang::abort("`state` is required for tract lookup.")
     }
+
+    if (!is.logical(include_context) || length(include_context) != 1 || is.na(include_context)) {
+        rlang::abort("`include_context` must be a single non-missing logical value.")
+    }
+
+    validate_context_format(context_format)
 
     geocoder <- match.arg(geocoder)
 
@@ -98,92 +119,134 @@ link_context <- function(
     }
 
     if (has_lat && has_lon) {
-        return(
-            do.call(
-                id_tract,
-                list(
-                    .data = .data,
-                    lat = lat_nm,
-                    lon = lon_nm,
-                    state = state,
-                    year = year,
-                    keep_geometry = keep_geometry,
-                    cache = cache
-                )
+        result <- do.call(
+            id_tract,
+            list(
+                .data = .data,
+                lat = lat_nm,
+                lon = lon_nm,
+                state = state,
+                year = year,
+                keep_geometry = keep_geometry,
+                cache = cache
             )
         )
-    }
+    } else {
+        address_nm <- col_arg_name(rlang::enquo(address))
+        street_nm <- col_arg_name(rlang::enquo(street))
+        city_nm <- col_arg_name(rlang::enquo(city))
+        state_col_nm <- col_arg_name(rlang::enquo(state_col))
+        zip_nm <- col_arg_name(rlang::enquo(zip))
 
-    address_nm <- col_arg_name(rlang::enquo(address))
-    street_nm <- col_arg_name(rlang::enquo(street))
-    city_nm <- col_arg_name(rlang::enquo(city))
-    state_col_nm <- col_arg_name(rlang::enquo(state_col))
-    zip_nm <- col_arg_name(rlang::enquo(zip))
+        has_full_address <- !is.null(address_nm)
 
-    has_full_address <- !is.null(address_nm)
-
-    has_component_address <- all(
-        !vapply(
-            list(street_nm, city_nm, state_col_nm, zip_nm),
-            is.null,
-            logical(1)
+        has_component_address <- all(
+            !vapply(
+                list(street_nm, city_nm, state_col_nm, zip_nm),
+                is.null,
+                logical(1)
+            )
         )
-    )
 
-    has_partial_component_address <- any(
-        !vapply(
-            list(street_nm, city_nm, state_col_nm, zip_nm),
-            is.null,
-            logical(1)
-        )
-    ) && !has_component_address
+        has_partial_component_address <- any(
+            !vapply(
+                list(street_nm, city_nm, state_col_nm, zip_nm),
+                is.null,
+                logical(1)
+            )
+        ) && !has_component_address
 
-    if (!has_full_address && !has_component_address) {
-        if (has_partial_component_address) {
+        if (!has_full_address && !has_component_address) {
+            if (has_partial_component_address) {
+                rlang::abort(
+                    paste(
+                        "Component address geocoding requires all of",
+                        "`street`, `city`, `state_col`, and `zip`."
+                    )
+                )
+            }
+
             rlang::abort(
                 paste(
-                    "Component address geocoding requires all of",
+                    "`link_context()` requires either `lat` and `lon`,",
+                    "`address`, or component address fields",
                     "`street`, `city`, `state_col`, and `zip`."
                 )
             )
         }
 
-        rlang::abort(
-            paste(
-                "`link_context()` requires either `lat` and `lon`,",
-                "`address`, or component address fields",
-                "`street`, `city`, `state_col`, and `zip`."
+        geocode_args <- list(
+            .data = .data,
+            geocoder = geocoder,
+            confirm_external = confirm_external
+        )
+
+        if (has_full_address) {
+            geocode_args$address <- address_nm
+        } else {
+            geocode_args$street <- street_nm
+            geocode_args$city <- city_nm
+            geocode_args$state <- state_col_nm
+            geocode_args$zip <- zip_nm
+        }
+
+        geocoded <- do.call(gc_address, geocode_args)
+
+        result <- do.call(
+            id_tract,
+            list(
+                .data = geocoded,
+                lat = "latitude",
+                lon = "longitude",
+                state = state,
+                year = year,
+                keep_geometry = keep_geometry,
+                cache = cache
             )
         )
     }
 
-    geocode_args <- list(
-        .data = .data,
-        geocoder = geocoder,
-        confirm_external = confirm_external
-    )
+    if (include_context) {
+        if (context_format != "wide") {
+            rlang::abort(
+                paste(
+                    "`context_format = \"long\"` is not yet supported inside",
+                    "`link_context()` because it would create multiple rows per",
+                    "individual record. Use `get_context()` directly for long",
+                    "Cancer InFocus output."
+                )
+            )
+        }
 
-    if (has_full_address) {
-        geocode_args$address <- address_nm
-    } else {
-        geocode_args$street <- street_nm
-        geocode_args$city <- city_nm
-        geocode_args$state <- state_col_nm
-        geocode_args$zip <- zip_nm
+        linked_rows <- rep(TRUE, nrow(result))
+
+        if (".tract_identified" %in% names(result)) {
+            linked_rows <- result$.tract_identified
+        }
+
+        tract_ids <- unique(result$tract_geoid[
+            !is.na(result$tract_geoid) &
+                result$tract_geoid != "" &
+                linked_rows
+        ])
+
+        if (length(tract_ids) > 0) {
+            context_data <- get_context(
+                geographies = tract_ids,
+                measures = context_measures,
+                geography = "tract",
+                format = "wide"
+            )
+
+            names(context_data)[names(context_data) == "GEOID"] <- "tract_geoid"
+
+            result <- join_context(
+                result,
+                context_data,
+                by = "tract_geoid"
+            )
+        }
     }
 
-    geocoded <- do.call(gc_address, geocode_args)
-
-    do.call(
-        id_tract,
-        list(
-            .data = geocoded,
-            lat = "latitude",
-            lon = "longitude",
-            state = state,
-            year = year,
-            keep_geometry = keep_geometry,
-            cache = cache
-        )
-    )
+    result
 }
