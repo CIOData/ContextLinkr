@@ -41,11 +41,16 @@ get_context <- function(
         year = year
     )
 
-    rlang::abort(
-        paste(
-            "`get_context()` is planned but not yet implemented.",
-            "Future versions will retrieve contextual variables from",
-            "Cancer InFocus data."
-        )
+    context_data <- read_cif_context_data(
+        geography = geography,
+        geographies = geographies
     )
+
+    context_data <- context_data[context_data$GEOID %in% geographies, , drop = FALSE]
+
+    if (!is.null(measures)) {
+        context_data <- context_data[context_data$def %in% measures, , drop = FALSE]
+    }
+
+    tibble::as_tibble(context_data)
 }

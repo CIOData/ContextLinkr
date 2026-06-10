@@ -24,6 +24,8 @@ validate_context_request <- function(
         rlang::abort("`geographies` must not contain empty strings.")
     }
 
+    validate_context_geography(geography)
+
     if (!is.null(measures)) {
         if (!is.character(measures)) {
             rlang::abort("`measures` must be `NULL` or a character vector.")
@@ -41,11 +43,13 @@ validate_context_request <- function(
             rlang::abort("`measures` must not contain empty strings.")
         }
 
-        available_measures <- available_context_measures()
+        available_measures <- available_context_measures(
+            geography = geography
+        )
 
         unknown_measures <- setdiff(
             measures,
-            available_measures$measure
+            available_measures$def
         )
 
         if (length(unknown_measures) > 0) {
@@ -57,14 +61,6 @@ validate_context_request <- function(
                 )
             )
         }
-    }
-
-    if (!is.character(geography) || length(geography) != 1 || is.na(geography)) {
-        rlang::abort("`geography` must be a single non-missing character string.")
-    }
-
-    if (!geography %in% c("tract", "county")) {
-        rlang::abort("`geography` must be one of \"tract\" or \"county\".")
     }
 
     if (!is.null(year)) {

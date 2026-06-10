@@ -1,38 +1,46 @@
 #' List available Cancer InFocus contextual measures
 #'
-#' `available_context_measures()` returns a table of contextual measures that
-#' ContextLinkr can retrieve or expects to retrieve from Cancer InFocus data.
+#' `available_context_measures()` returns a table of contextual measures
+#' available from Cancer InFocus data.
 #'
-#' This function is an early metadata scaffold. The initial measure list is
-#' intentionally small and will expand as Cancer InFocus retrieval is
-#' implemented.
+#' The returned `def` column contains the measure definitions that can be passed
+#' to the `measures` argument of [get_context()].
 #'
-#' @return A tibble with one row per contextual measure and columns:
-#'   `measure`, `label`, `geography`, and `status`.
+#' @param geography Optional geographic level to filter to. One of `"county"` or
+#'   `"tract"`. If `NULL`, measures for all geographies are returned.
+#' @param base_url Base URL for ContextLinkr public Parquet files.
+#'
+#' @return A tibble containing available contextual measure metadata.
 #'
 #' @examples
+#' \dontrun{
 #' available_context_measures()
+#' available_context_measures("tract")
+#' }
 #'
 #' @seealso [get_context()]
 #'
 #' @export
-available_context_measures <- function() {
-    tibble::tibble(
-        measure = c(
-            "poverty",
-            "rurality"
-        ),
-        label = c(
-            "Poverty",
-            "Rurality"
-        ),
-        geography = c(
-            "tract",
-            "tract"
-        ),
-        status = c(
-            "planned",
-            "planned"
-        )
+available_context_measures <- function(
+        geography = NULL,
+        base_url = "https://cancerinfocus.org/public-data/ContextLinkr"
+) {
+    if (!is.null(geography)) {
+        validate_context_geography(geography)
+    }
+
+    url <- cif_context_url(
+        geography = "measures",
+        base_url = base_url
     )
+
+    measures <- tibble::as_tibble(
+        arrow::read_parquet(url)
+    )
+
+    if (!is.null(geography) && "geography" %in% names(measures)) {
+        measures <- measures[measures$geography == geography, , drop = FALSE]
+    }
+
+    measures
 }

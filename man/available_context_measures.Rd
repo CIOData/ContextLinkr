@@ -4,23 +4,33 @@
 \alias{available_context_measures}
 \title{List available Cancer InFocus contextual measures}
 \usage{
-available_context_measures()
+available_context_measures(
+  geography = NULL,
+  base_url = "https://cancerinfocus.org/public-data/ContextLinkr"
+)
+}
+\arguments{
+\item{geography}{Optional geographic level to filter to. One of \code{"county"} or
+\code{"tract"}. If \code{NULL}, measures for all geographies are returned.}
+
+\item{base_url}{Base URL for ContextLinkr public Parquet files.}
 }
 \value{
-A tibble with one row per contextual measure and columns:
-\code{measure}, \code{label}, \code{geography}, and \code{status}.
+A tibble containing available contextual measure metadata.
 }
 \description{
-\code{available_context_measures()} returns a table of contextual measures that
-ContextLinkr can retrieve or expects to retrieve from Cancer InFocus data.
+\code{available_context_measures()} returns a table of contextual measures
+available from Cancer InFocus data.
 }
 \details{
-This function is an early metadata scaffold. The initial measure list is
-intentionally small and will expand as Cancer InFocus retrieval is
-implemented.
+The returned \code{def} column contains the measure definitions that can be passed
+to the \code{measures} argument of \code{\link[=get_context]{get_context()}}.
 }
 \examples{
+\dontrun{
 available_context_measures()
+available_context_measures("tract")
+}
 
 }
 \seealso{
