@@ -245,6 +245,15 @@ link_context <- function(
                 context_data,
                 by = "tract_geoid"
             )
+        } else {
+            result$.context_joined <- FALSE
+
+            attr(result, "contextlinkr_context_summary") <- list(
+                joined = 0L,
+                total = nrow(result),
+                join_rate = if (nrow(result) > 0) 0 else NA_real_,
+                by = "tract_geoid"
+            )
         }
     }
 
