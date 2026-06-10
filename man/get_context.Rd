@@ -4,7 +4,13 @@
 \alias{get_context}
 \title{Retrieve Cancer InFocus contextual data}
 \usage{
-get_context(geographies, measures = NULL, geography = "tract", year = NULL)
+get_context(
+  geographies,
+  measures = NULL,
+  geography = "tract",
+  year = NULL,
+  format = "long"
+)
 }
 \arguments{
 \item{geographies}{A character vector of geographic identifiers, such as
@@ -17,6 +23,10 @@ If \code{NULL}, a default set of measures may be returned in future versions.}
 \code{"tract"} and \code{"county"}.}
 
 \item{year}{Optional year or data vintage.}
+
+\item{format}{Output format. Use \code{"long"} to return Cancer InFocus rows as
+stored in the source data, or \code{"wide"} to return one row per geography with
+one column per contextual measure definition.}
 }
 \value{
 Currently aborts with an informative message because Cancer InFocus

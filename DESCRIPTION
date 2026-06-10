@@ -22,6 +22,8 @@ Imports:
     stringr,
     tibble,
     tidygeocoder,
+    tidyr,
+    tidyselect,
     tigris
 Depends: 
     R (>= 3.5)

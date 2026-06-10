@@ -14,6 +14,9 @@
 #' @param geography Geographic level. Currently planned values include
 #'   `"tract"` and `"county"`.
 #' @param year Optional year or data vintage.
+#' @param format Output format. Use `"long"` to return Cancer InFocus rows as
+#'   stored in the source data, or `"wide"` to return one row per geography with
+#'   one column per contextual measure definition.
 #'
 #' @return Currently aborts with an informative message because Cancer InFocus
 #'   retrieval is not yet implemented.
@@ -32,7 +35,8 @@ get_context <- function(
         geographies,
         measures = NULL,
         geography = "tract",
-        year = NULL
+        year = NULL,
+        format = "long"
 ) {
     validate_context_request(
         geographies = geographies,
@@ -40,6 +44,8 @@ get_context <- function(
         geography = geography,
         year = year
     )
+
+    validate_context_format(format)
 
     context_data <- read_cif_context_data(
         geography = geography,
@@ -52,5 +58,11 @@ get_context <- function(
         context_data <- context_data[context_data$def %in% measures, , drop = FALSE]
     }
 
-    tibble::as_tibble(context_data)
+    context_data <- tibble::as_tibble(context_data)
+
+    if (format == "wide") {
+        return(widen_context_data(context_data))
+    }
+
+    context_data
 }
