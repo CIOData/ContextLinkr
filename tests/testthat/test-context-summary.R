@@ -75,3 +75,25 @@ test_that("context_summary() uses context summary attribute when available", {
     expect_equal(result$join_rate, 0.5)
     expect_equal(result$join_rate_pct, 50)
 })
+
+test_that("context_summary() summarizes link_context-style context attributes", {
+    result <- tibble::tibble(
+        id = 1:2,
+        tract_geoid = c("01001020100", "01001020200"),
+        .context_joined = c(TRUE, FALSE)
+    )
+
+    attr(result, "contextlinkr_context_summary") <- list(
+        joined = 1L,
+        total = 2L,
+        join_rate = 0.5,
+        by = "tract_geoid"
+    )
+
+    summary <- context_summary(result)
+
+    expect_s3_class(summary, "tbl_df")
+    expect_equal(summary$joined, 1L)
+    expect_equal(summary$total, 2L)
+    expect_equal(summary$join_rate, 0.5)
+})

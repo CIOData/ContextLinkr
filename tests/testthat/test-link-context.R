@@ -389,4 +389,11 @@ test_that("link_context() can include Cancer InFocus context", {
     expect_s3_class(result, "tbl_df")
     expect_true("Total Population" %in% names(result))
     expect_true(".context_joined" %in% names(result))
+
+    summary <- context_summary(result)
+
+    expect_s3_class(summary, "tbl_df")
+    expect_true("joined" %in% names(summary))
+    expect_true("total" %in% names(summary))
+    expect_true("join_rate" %in% names(summary))
 })
