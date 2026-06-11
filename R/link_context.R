@@ -218,43 +218,11 @@ link_context <- function(
             )
         }
 
-        linked_rows <- rep(TRUE, nrow(result))
-
-        if (".tract_identified" %in% names(result)) {
-            linked_rows <- result$.tract_identified
-        }
-
-        tract_ids <- unique(result$tract_geoid[
-            !is.na(result$tract_geoid) &
-                result$tract_geoid != "" &
-                linked_rows
-        ])
-
-        if (length(tract_ids) > 0) {
-            context_data <- get_context(
-                geographies = tract_ids,
-                measures = context_measures,
-                geography = "tract",
-                format = "wide"
-            )
-
-            names(context_data)[names(context_data) == "GEOID"] <- "tract_geoid"
-
-            result <- join_context(
-                result,
-                context_data,
-                by = "tract_geoid"
-            )
-        } else {
-            result$.context_joined <- FALSE
-
-            attr(result, "contextlinkr_context_summary") <- list(
-                joined = 0L,
-                total = nrow(result),
-                join_rate = if (nrow(result) > 0) 0 else NA_real_,
-                by = "tract_geoid"
-            )
-        }
+        result <- add_context(
+            result,
+            tract_col = "tract_geoid",
+            measures = context_measures
+        )
     }
 
     result
