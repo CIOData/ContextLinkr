@@ -138,7 +138,77 @@ records_to_review <- link_failures(linked)
 These helpers are useful for basic QA after geocoding and tract
 identification.
 
+## Add Cancer InFocus contextual data
+
+ContextLinkr can add selected Cancer InFocus contextual variables to
+records that have been linked to Census tracts. The recommended workflow
+is to start with individual-level records, identify tract GEOIDs, and
+then retrieve Cancer InFocus contextual measures for those tracts.
+
+For an end-to-end workflow, use `link_context()` with
+`include_context = TRUE`:
+
+``` r
+linked_with_context <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE,
+  include_context = TRUE,
+  context_measures = "Total Population"
+)
+
+linked_with_context
+```
+
+If records have already been linked to Census tracts, use
+`add_context()`:
+
+``` r
+linked <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked_with_context <- add_context(
+  linked,
+  tract_col = tract_geoid,
+  measures = "Total Population"
+)
+
+linked_with_context
+```
+
+Available Cancer InFocus measures can be reviewed with:
+
+``` r
+available_context_measures("tract")
+```
+
+For advanced use, `get_context()` retrieves Cancer InFocus context
+directly:
+
+``` r
+tract_context <- get_context(
+  geographies = c("11001006202"),
+  measures = "Total Population",
+  geography = "tract",
+  format = "wide"
+)
+
+tract_context
+```
+
 ## Join contextual variables
+
+`join_context()` is a lower-level helper for joining user-supplied
+contextual data. Most users who want Cancer InFocus contextual variables
+should use `add_context()` or `link_context(include_context = TRUE)`
+instead.
 
 After records have been linked to Census tract geography,
 `join_context()` can join tract-level contextual variables to
@@ -154,10 +224,11 @@ joined <- join_context(
 joined
 ```
 
-`join_context()` does not download contextual data. It joins contextual
-variables that are already available in memory. The included
-`sample_context` dataset is a small illustrative dataset for examples
-and tests.
+`join_context()` is a lower-level helper that joins already-available
+contextual variables to linked individual-level records. In the intended
+end-user workflow, contextual variables will come from Cancer InFocus
+data. The included `sample_context` dataset is a small illustrative
+dataset for examples and tests.
 
 If the join key has different names in the linked records and contextual
 data, use a named character vector. The name identifies the key in the
@@ -219,7 +290,9 @@ Implemented core functions include:
 
 Planned future development includes:
 
-- Optional retrieval of selected contextual data sources.
-- Additional examples and articles for common linkage workflows.
-- Expanded QA helpers for reviewing incomplete linkage and context
-  joins.
+- `get_context()` — retrieve contextual variable values from Cancer
+  InFocus data.
+- Extension of `link_context()` to support an end-to-end workflow from
+  individual-level records to Cancer InFocus contextual variables.
+- Additional QA helpers for reviewing incomplete geographic linkage and
+  context retrieval.

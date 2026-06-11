@@ -136,7 +136,73 @@ records_to_review <- link_failures(linked)
 
 These helpers are useful for basic QA after geocoding and tract identification.
 
+## Add Cancer InFocus contextual data
+
+ContextLinkr can add selected Cancer InFocus contextual variables to records
+that have been linked to Census tracts. The recommended workflow is to start
+with individual-level records, identify tract GEOIDs, and then retrieve
+Cancer InFocus contextual measures for those tracts.
+
+For an end-to-end workflow, use `link_context()` with `include_context = TRUE`:
+
+```{r include-context, eval=FALSE}
+linked_with_context <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE,
+  include_context = TRUE,
+  context_measures = "Total Population"
+)
+
+linked_with_context
+```
+
+If records have already been linked to Census tracts, use `add_context()`:
+
+```{r add-context, eval=FALSE}
+linked <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked_with_context <- add_context(
+  linked,
+  tract_col = tract_geoid,
+  measures = "Total Population"
+)
+
+linked_with_context
+```
+
+Available Cancer InFocus measures can be reviewed with:
+
+```{r available-context, eval=FALSE}
+available_context_measures("tract")
+```
+
+For advanced use, `get_context()` retrieves Cancer InFocus context directly:
+
+```{r get-context, eval=FALSE}
+tract_context <- get_context(
+  geographies = c("11001006202"),
+  measures = "Total Population",
+  geography = "tract",
+  format = "wide"
+)
+
+tract_context
+```
+
 ## Join contextual variables
+
+`join_context()` is a lower-level helper for joining user-supplied contextual
+data. Most users who want Cancer InFocus contextual variables should use
+`add_context()` or `link_context(include_context = TRUE)` instead.
 
 After records have been linked to Census tract geography, `join_context()` can
 join tract-level contextual variables to individual-level records.
