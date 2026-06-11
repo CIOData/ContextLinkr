@@ -189,6 +189,12 @@ Available Cancer InFocus measures can be reviewed with:
 available_context_measures("tract")
 ```
 
+You can also search available measures by keyword:
+
+``` r
+search_context_measures("population", geography = "tract")
+```
+
 For advanced use, `get_context()` retrieves Cancer InFocus context
 directly:
 
