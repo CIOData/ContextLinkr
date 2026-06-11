@@ -3,9 +3,12 @@ Title: Link Individual-Level Records to Geographic Contextual Data
 Version: 0.0.0.9000
 Authors@R: 
     person("Todd", "Burus", email = "tburus@uky.edu", role = c("aut", "cre"))
-Description: Provides tools for geocoding location data, identifying geographic
-    units, linking individual-level records to geographic identifiers, and
-    joining user-supplied contextual variables for multilevel health research.
+Description: Provides tools for geocoding location data, identifying Census
+    tract geography, linking individual-level records to geographic identifiers,
+    and adding contextual variables from Cancer InFocus data for multilevel
+    health research. The package supports end-to-end record linkage workflows,
+    retrieval of Cancer InFocus contextual measures, and lower-level helpers for
+    joining user-supplied contextual data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
