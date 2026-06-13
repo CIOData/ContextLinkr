@@ -1,6 +1,6 @@
 Package: ContextLinkr
 Title: Link Individual-Level Records to Geographic Contextual Data
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     person("Todd", "Burus", email = "tburus@uky.edu", role = c("aut", "cre"))
 Description: Provides tools for geocoding location data, identifying Census
