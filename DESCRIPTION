@@ -29,3 +29,5 @@ Imports:
 Depends: 
     R (>= 3.5)
 LazyData: true
+URL: https://github.com/CIOData/ContextLinkr
+BugReports: https://github.com/CIOData/ContextLinkr/issues
