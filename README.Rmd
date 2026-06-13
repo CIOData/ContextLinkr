@@ -136,6 +136,47 @@ records_to_review <- link_failures(linked)
 
 These helpers are useful for basic QA after geocoding and tract identification.
 
+## Privacy and data flow
+
+ContextLinkr is designed to keep individual-level records local except when a
+user explicitly requests geocoding through an external service.
+
+When `link_context()` or `gc_address()` uses address-based geocoding, address
+fields may be sent to the selected geocoding service. For this reason,
+ContextLinkr requires `confirm_external = TRUE` before address data are sent
+outside the local R session.
+
+If records already contain latitude/longitude coordinates or Census tract
+GEOIDs, ContextLinkr does not need to send address fields to a geocoder.
+
+Cancer InFocus contextual data retrieval uses geography identifiers, such as
+Census tract GEOIDs, to retrieve public contextual measures. Users should not
+send names, medical record numbers, dates of birth, street addresses, or other
+direct personal identifiers to Cancer InFocus context retrieval functions.
+
+For example, if records already contain coordinates, `link_context()` can
+identify Census tracts without sending address fields to a geocoder:
+
+```{r privacy-coordinates, eval=FALSE}
+linked <- link_context(
+  records,
+  lat = latitude,
+  lon = longitude,
+  state = "DC"
+)
+```
+
+If records already contain tract GEOIDs, `add_context()` can retrieve Cancer
+InFocus contextual variables directly:
+
+```{r existing-geoids, eval=FALSE}
+linked_with_context <- add_context(
+  records,
+  tract_col = tract_geoid,
+  measures = "Total Population"
+)
+```
+
 ## Add Cancer InFocus contextual data
 
 ContextLinkr can add selected Cancer InFocus contextual variables to records
