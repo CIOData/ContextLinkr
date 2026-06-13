@@ -34,9 +34,7 @@ available_context_measures <- function(
         base_url = base_url
     )
 
-    measures <- tibble::as_tibble(
-        arrow::read_parquet(url)
-    )
+    measures <- read_context_parquet(url)
 
     if (!is.null(geography) && "geography" %in% names(measures)) {
         measures <- measures[measures$geography == geography, , drop = FALSE]

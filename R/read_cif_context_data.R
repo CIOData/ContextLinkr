@@ -67,7 +67,7 @@ read_cif_context_data <- function(
 
     context_data <- lapply(
         urls,
-        arrow::read_parquet
+        read_context_parquet
     )
 
     context_data <- do.call(rbind, context_data)
