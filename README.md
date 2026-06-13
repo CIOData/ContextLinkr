@@ -17,6 +17,53 @@ retrieval of selected contextual data sources.
 # repository is public.
 ```
 
+## Typical workflow
+
+ContextLinkr is designed for workflows where users start with
+individual-level records and want to add place-based contextual
+measures.
+
+A typical workflow is:
+
+1.  Start with records that contain either address fields,
+    latitude/longitude coordinates, or Census tract GEOIDs.
+2.  Use `link_context()` to geocode records when needed and identify
+    Census tracts.
+3.  Use `add_context()` to add selected Cancer InFocus contextual
+    variables.
+4.  Use summary helpers to review linkage and context-joining results.
+
+``` r
+linked <- link_context(
+  records,
+  lat = latitude,
+  lon = longitude,
+  state = "DC"
+)
+
+linked_with_context <- add_context(
+  linked,
+  measures = "Total Population"
+)
+
+link_summary(linked_with_context)
+context_summary(linked_with_context)
+```
+
+For an end-to-end call, Cancer InFocus context can also be requested
+directly inside `link_context()`:
+
+``` r
+linked_with_context <- link_context(
+  records,
+  lat = latitude,
+  lon = longitude,
+  state = "DC",
+  include_context = TRUE,
+  context_measures = "Total Population"
+)
+```
+
 ## Basic geocoding example
 
 `gc_address()` accepts either a full address column or separate street,
