@@ -56,6 +56,14 @@ illustrative datasets for examples and tests. These datasets are not
 intended for analysis.
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/CIOData/ContextLinkr}
+  \item Report bugs at \url{https://github.com/CIOData/ContextLinkr/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Todd Burus \email{tburus@uky.edu}
 

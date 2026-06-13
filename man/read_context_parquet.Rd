@@ -4,16 +4,20 @@
 \alias{read_context_parquet}
 \title{Read a Cancer InFocus context Parquet file}
 \usage{
-read_context_parquet(path)
+read_context_parquet(path, use_cache = TRUE)
 }
 \arguments{
 \item{path}{Local path or URL to a Parquet file.}
+
+\item{use_cache}{Logical. If \code{TRUE}, remote files are cached locally before
+reading.}
 }
 \value{
 A tibble containing the Parquet data.
 }
 \description{
 Reads a local or remote Cancer InFocus Parquet file and converts low-level
-read failures into user-facing ContextLinkr errors.
+read failures into user-facing ContextLinkr errors. Remote files can be
+cached locally to reduce repeated downloads.
 }
 \keyword{internal}
