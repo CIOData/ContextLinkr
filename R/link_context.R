@@ -206,6 +206,8 @@ link_context <- function(
         )
     }
 
+    # Keep context enrichment as the final step so both coordinate-based
+    # and geocoded workflows share the same post-linkage behavior.
     if (include_context) {
         if (context_format != "wide") {
             rlang::abort(
