@@ -116,3 +116,9 @@ Please report:
 - missing documentation;
 - unexpected outputs;
 - privacy or data-flow concerns.
+
+## 10. Submit feedback
+
+Please submit feedback using the GitHub issue template titled
+"Collaborator feedback". If you encountered a reproducible error, use the
+"Bug report" template instead.
