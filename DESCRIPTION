@@ -14,6 +14,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
@@ -31,3 +33,4 @@ Depends:
 LazyData: true
 URL: https://github.com/CIOData/ContextLinkr
 BugReports: https://github.com/CIOData/ContextLinkr/issues
+VignetteBuilder: knitr

@@ -1,0 +1,169 @@
+---
+title: "ContextLinkr workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ContextLinkr workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Overview
+
+ContextLinkr supports workflows that link individual-level records to place-based
+contextual measures. The typical workflow is:
+
+1. Start with records that contain addresses, latitude/longitude coordinates, or
+   Census tract GEOIDs.
+2. Identify Census tract geography with `link_context()` or `id_tract()`.
+3. Add selected Cancer InFocus contextual measures with `add_context()` or
+   `link_context(include_context = TRUE)`.
+4. Review linkage and context-joining results with summary helpers.
+
+This vignette uses `eval = FALSE` examples so that it does not send address data
+to external services or retrieve hosted data during package checks.
+
+## Link records to Census tracts
+
+If records already contain latitude and longitude, `link_context()` can identify
+Census tracts without sending address fields to a geocoder.
+
+```{r link-coordinates}
+library(ContextLinkr)
+
+records <- tibble::tibble(
+  id = 1,
+  latitude = 38.8977,
+  longitude = -77.0365
+)
+
+linked <- link_context(
+  records,
+  lat = latitude,
+  lon = longitude,
+  state = "DC"
+)
+
+linked
+```
+
+If records contain address fields instead of coordinates, `link_context()` can
+geocode records before tract identification. Because this sends address data to
+an external geocoding service, `confirm_external = TRUE` is required.
+
+```{r link-addresses}
+linked_from_address <- link_context(
+  sample_addresses,
+  address = address,
+  state = "DC",
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked_from_address
+```
+
+## Review linkage results
+
+After records are linked, use the summary helpers to inspect the result.
+
+```{r linkage-summary}
+link_summary(linked)
+link_successes(linked)
+link_failures(linked)
+```
+
+## Find Cancer InFocus contextual measures
+
+Use `available_context_measures()` to review available Cancer InFocus contextual
+measure definitions.
+
+```{r available-measures}
+available_context_measures("tract")
+```
+
+Use `search_context_measures()` to search measure metadata by keyword.
+
+```{r search-measures}
+search_context_measures("population", geography = "tract")
+```
+
+The `def` column contains the values to pass to `measures` or
+`context_measures`.
+
+## Add context to linked records
+
+If records already contain a tract GEOID column, use `add_context()` to retrieve
+Cancer InFocus contextual variables and join them to the records.
+
+```{r add-context}
+linked_with_context <- add_context(
+  linked,
+  tract_col = tract_geoid,
+  measures = "Total Population"
+)
+
+linked_with_context
+```
+
+Review context-joining results with the context summary helpers.
+
+```{r context-summary}
+context_summary(linked_with_context)
+context_successes(linked_with_context)
+context_failures(linked_with_context)
+```
+
+## Run the end-to-end workflow in one call
+
+For convenience, `link_context()` can also add Cancer InFocus context after tract
+linkage.
+
+```{r end-to-end}
+linked_with_context <- link_context(
+  records,
+  lat = latitude,
+  lon = longitude,
+  state = "DC",
+  include_context = TRUE,
+  context_measures = "Total Population"
+)
+
+linked_with_context
+```
+
+## Retrieve context directly
+
+For advanced workflows, `get_context()` retrieves Cancer InFocus context for
+specific geography IDs.
+
+```{r get-context}
+tract_context <- get_context(
+  geographies = "11001006202",
+  measures = "Total Population",
+  geography = "tract",
+  format = "wide"
+)
+
+tract_context
+```
+
+Use `format = "long"` when you want metadata-rich rows suitable for inspection or
+analysis, and `format = "wide"` when you want one row per geography for joining.
+
+## Privacy and data flow
+
+ContextLinkr keeps individual-level records local unless a user explicitly
+requests address-based geocoding through an external service.
+
+Cancer InFocus context retrieval uses geography identifiers, such as Census tract
+GEOIDs, to retrieve public contextual measures. Users should not send names,
+medical record numbers, dates of birth, street addresses, or other direct
+personal identifiers to Cancer InFocus context retrieval functions.
