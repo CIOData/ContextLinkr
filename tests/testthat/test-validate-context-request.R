@@ -31,14 +31,24 @@ test_that("validate_context_request() accepts county requests", {
     )
 })
 
-test_that("validate_context_request() rejects unsupported measures", {
+test_that("validate_context_request() rejects unsupported measures with suggestions", {
     skip_if_no_cif_integration()
+
     expect_error(
         validate_context_request(
-            geographies = "11001980000",
-            measures = "not_a_measure",
+            geographies = "11001006202",
+            measures = "Population",
             geography = "tract"
         ),
         "`measures` contains unsupported value"
+    )
+
+    expect_error(
+        validate_context_request(
+            geographies = "11001006202",
+            measures = "Population",
+            geography = "tract"
+        ),
+        "search_context_measures"
     )
 })

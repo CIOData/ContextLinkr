@@ -59,11 +59,19 @@ validate_context_request <- function(
         )
 
         if (length(unknown_measures) > 0) {
+            suggestions <- closest_context_measures(
+                unknown_measures[[1]],
+                available_measures
+            )
+
             rlang::abort(
-                paste0(
-                    "`measures` contains unsupported value(s): ",
-                    paste(unknown_measures, collapse = ", "),
-                    "."
+                paste(
+                    paste0(
+                        "`measures` contains unsupported value(s): ",
+                        paste(unknown_measures, collapse = ", "),
+                        "."
+                    ),
+                    format_context_measure_suggestions(suggestions)
                 )
             )
         }
