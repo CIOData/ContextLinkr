@@ -30,6 +30,10 @@ contextual measures. The typical workflow is:
 This vignette uses `eval = FALSE` examples so that it does not send address data
 to external services or retrieve hosted data during package checks.
 
+ContextLinkr is under active development. Function names, arguments, and
+output structures may change before a stable release. For collaborator
+testing, use a tagged release or a specific Git commit when possible.
+
 ## Link records to Census tracts
 
 If records already contain latitude and longitude, `link_context()` can identify

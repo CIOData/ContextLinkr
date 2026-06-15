@@ -17,6 +17,17 @@ retrieval of selected contextual data sources.
 # repository is public.
 ```
 
+## Development status
+
+ContextLinkr is under active development. The current version supports
+geocoding, Census tract identification, Cancer InFocus contextual data
+retrieval, and contextual data joining workflows. Function names,
+arguments, and output structures may change before a stable release.
+
+For collaborator testing, we recommend using a tagged release or a
+specific Git commit rather than relying on the moving development
+branch.
+
 ## Typical workflow
 
 ContextLinkr is designed for workflows where users start with
