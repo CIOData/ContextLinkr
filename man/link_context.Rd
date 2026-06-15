@@ -21,6 +21,7 @@ link_context(
   context_measures = NULL,
   context_format = "wide",
   include_context = FALSE,
+  context_cache = TRUE,
   cache = TRUE
 )
 }
@@ -71,6 +72,9 @@ joining.}
 \item{include_context}{Logical. If \code{TRUE}, retrieve Cancer InFocus
 contextual variables for successfully linked Census tracts and join them
 back to the linked records. Defaults to \code{FALSE}.}
+
+\item{context_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files
+are cached locally before reading when \code{include_context = TRUE}.}
 
 \item{cache}{Logical. Whether to use tigris caching during tract lookup.
 Passed to \code{\link[=id_tract]{id_tract()}}.}

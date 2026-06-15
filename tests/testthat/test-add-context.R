@@ -50,3 +50,13 @@ test_that("add_context() can use a custom tract column", {
     expect_true("Total Population" %in% names(result))
     expect_true(".context_joined" %in% names(result))
 })
+
+test_that("add_context() validates use_cache", {
+    expect_error(
+        add_context(
+            tibble::tibble(id = 1, tract_geoid = "11001006202"),
+            use_cache = NA
+        ),
+        "`use_cache` must be a single non-missing logical value"
+    )
+})

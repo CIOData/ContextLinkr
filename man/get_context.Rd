@@ -9,7 +9,8 @@ get_context(
   measures = NULL,
   geography = "tract",
   year = NULL,
-  format = "long"
+  format = "long",
+  use_cache = TRUE
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ If \code{NULL}, a default set of measures may be returned in future versions.}
 \item{format}{Output format. Use \code{"long"} to return Cancer InFocus rows as
 stored in the source data, or \code{"wide"} to return one row per geography with
 one column per contextual measure definition.}
+
+\item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
+cached locally before reading.}
 }
 \value{
 Currently aborts with an informative message because Cancer InFocus

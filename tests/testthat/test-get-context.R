@@ -66,3 +66,15 @@ test_that("get_context() can return wide context data", {
     expect_true("GEOID" %in% names(result))
     expect_true("Total Population" %in% names(result))
 })
+
+test_that("get_context() validates use_cache", {
+    expect_error(
+        get_context(
+            geographies = "11001006202",
+            measures = "Total Population",
+            geography = "tract",
+            use_cache = NA
+        ),
+        "`use_cache` must be a single non-missing logical value"
+    )
+})

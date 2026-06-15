@@ -55,3 +55,10 @@ test_that("search_context_measures() finds matching Cancer InFocus measures", {
         any(grepl("population", tolower(search_text), fixed = TRUE))
     )
 })
+
+test_that("search_context_measures() validates use_cache", {
+    expect_error(
+        search_context_measures("population", use_cache = NA),
+        "`use_cache` must be a single non-missing logical value"
+    )
+})

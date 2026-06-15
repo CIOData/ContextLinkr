@@ -28,3 +28,15 @@ test_that("available_context_measures() filters by geography", {
     expect_true(nrow(result) > 0)
     expect_true(all(result$geography == "tract"))
 })
+
+test_that("available_context_measures() validates use_cache", {
+    expect_error(
+        available_context_measures(use_cache = NA),
+        "`use_cache` must be a single non-missing logical value"
+    )
+
+    expect_error(
+        available_context_measures(use_cache = c(TRUE, FALSE)),
+        "`use_cache` must be a single non-missing logical value"
+    )
+})

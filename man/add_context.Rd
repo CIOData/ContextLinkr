@@ -4,7 +4,12 @@
 \alias{add_context}
 \title{Add Cancer InFocus contextual variables to linked records}
 \usage{
-add_context(.data, tract_col = "tract_geoid", measures = NULL)
+add_context(
+  .data,
+  tract_col = "tract_geoid",
+  measures = NULL,
+  use_cache = TRUE
+)
 }
 \arguments{
 \item{.data}{A data frame containing linked individual-level records.}
@@ -15,6 +20,9 @@ unquoted column names. Defaults to \code{"tract_geoid"}.}
 \item{measures}{Optional character vector of Cancer InFocus measure
 definitions to retrieve. If \code{NULL}, all available measures may be
 retrieved.}
+
+\item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
+cached locally before reading.}
 }
 \value{
 A tibble containing \code{.data} with selected Cancer InFocus contextual

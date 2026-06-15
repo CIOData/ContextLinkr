@@ -4,7 +4,12 @@
 \alias{search_context_measures}
 \title{Search available Cancer InFocus contextual measures}
 \usage{
-search_context_measures(query, geography = NULL, ignore_case = TRUE)
+search_context_measures(
+  query,
+  geography = NULL,
+  ignore_case = TRUE,
+  use_cache = TRUE
+)
 }
 \arguments{
 \item{query}{Character string to search for in measure metadata.}
@@ -13,6 +18,9 @@ search_context_measures(query, geography = NULL, ignore_case = TRUE)
 \code{"tract"}. If \code{NULL}, measures for all geographies are searched.}
 
 \item{ignore_case}{Logical. If \code{TRUE}, search is case-insensitive.}
+
+\item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
+cached locally before reading.}
 }
 \value{
 A tibble containing matching contextual measure metadata.

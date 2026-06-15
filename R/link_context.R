@@ -44,6 +44,8 @@
 #'   `include_context = TRUE`. Defaults to `"wide"` because linked
 #'   individual-level records generally require one row per geography for
 #'   joining.
+#' @param context_cache Logical. If `TRUE`, hosted Cancer InFocus context files
+#'   are cached locally before reading when `include_context = TRUE`.
 #' @param cache Logical. Whether to use tigris caching during tract lookup.
 #'   Passed to [id_tract()].
 #'
@@ -90,6 +92,7 @@ link_context <- function(
         context_measures = NULL,
         context_format = "wide",
         include_context = FALSE,
+        context_cache = TRUE,
         cache = TRUE
 ) {
     if (!is.data.frame(.data)) {
@@ -102,6 +105,10 @@ link_context <- function(
 
     if (!is.logical(include_context) || length(include_context) != 1 || is.na(include_context)) {
         rlang::abort("`include_context` must be a single non-missing logical value.")
+    }
+
+    if (!is.logical(context_cache) || length(context_cache) != 1 || is.na(context_cache)) {
+        rlang::abort("`context_cache` must be a single non-missing logical value.")
     }
 
     validate_context_format(context_format)
@@ -223,7 +230,8 @@ link_context <- function(
         result <- add_context(
             result,
             tract_col = "tract_geoid",
-            measures = context_measures
+            measures = context_measures,
+            use_cache = context_cache
         )
     }
 

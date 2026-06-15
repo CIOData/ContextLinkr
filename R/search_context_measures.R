@@ -8,6 +8,8 @@
 #' @param geography Optional geographic level to filter to. One of `"county"` or
 #'   `"tract"`. If `NULL`, measures for all geographies are searched.
 #' @param ignore_case Logical. If `TRUE`, search is case-insensitive.
+#' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
+#'   cached locally before reading.
 #'
 #' @return A tibble containing matching contextual measure metadata.
 #'
@@ -23,7 +25,8 @@
 search_context_measures <- function(
         query,
         geography = NULL,
-        ignore_case = TRUE
+        ignore_case = TRUE,
+        use_cache = TRUE
 ) {
     if (missing(query)) {
         rlang::abort("`query` is required.")
@@ -41,7 +44,14 @@ search_context_measures <- function(
         rlang::abort("`ignore_case` must be a single non-missing logical value.")
     }
 
-    measures <- available_context_measures(geography = geography)
+    if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
+        rlang::abort("`use_cache` must be a single non-missing logical value.")
+    }
+
+    measures <- available_context_measures(
+        geography = geography,
+        use_cache = use_cache
+    )
 
     search_cols <- intersect(
         c("cat", "measure", "def", "source"),

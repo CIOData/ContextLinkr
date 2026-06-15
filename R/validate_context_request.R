@@ -2,7 +2,8 @@ validate_context_request <- function(
         geographies,
         measures = NULL,
         geography = "tract",
-        year = NULL
+        year = NULL,
+        use_cache = TRUE
 ) {
     if (missing(geographies)) {
         rlang::abort("`geographies` is required.")
@@ -26,6 +27,10 @@ validate_context_request <- function(
 
     validate_context_geography(geography)
 
+    if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
+        rlang::abort("`use_cache` must be a single non-missing logical value.")
+    }
+
     if (!is.null(measures)) {
         if (!is.character(measures)) {
             rlang::abort("`measures` must be `NULL` or a character vector.")
@@ -44,7 +49,8 @@ validate_context_request <- function(
         }
 
         available_measures <- available_context_measures(
-            geography = geography
+            geography = geography,
+            use_cache = use_cache
         )
 
         unknown_measures <- setdiff(

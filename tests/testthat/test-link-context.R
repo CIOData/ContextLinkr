@@ -397,3 +397,16 @@ test_that("link_context() can include Cancer InFocus context", {
     expect_true("total" %in% names(summary))
     expect_true("join_rate" %in% names(summary))
 })
+
+test_that("link_context() validates context_cache", {
+    expect_error(
+        link_context(
+            sample_addresses,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            context_cache = NA
+        ),
+        "`context_cache` must be a single non-missing logical value"
+    )
+})

@@ -8,6 +8,8 @@
 #' @param geographies Optional character vector of GEOIDs. Required for
 #'   `geography = "tract"` so the needed state partitions can be inferred.
 #' @param base_url Base URL for ContextLinkr public Parquet files.
+#' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
+#'   cached locally before reading.
 #'
 #' @return A tibble containing Cancer InFocus context data.
 #'
@@ -16,9 +18,14 @@
 read_cif_context_data <- function(
         geography = "tract",
         geographies = NULL,
-        base_url = "https://cancerinfocus.org/public-data/ContextLinkr"
+        base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
+        use_cache = TRUE
 ) {
     validate_context_geography(geography)
+
+    if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
+        rlang::abort("`use_cache` must be a single non-missing logical value.")
+    }
 
     if (geography == "county") {
         url <- cif_context_url(
@@ -26,8 +33,9 @@ read_cif_context_data <- function(
             base_url = base_url
         )
 
-        return(tibble::as_tibble(
-            arrow::read_parquet(url)
+        return(read_context_parquet(
+            url,
+            use_cache = use_cache
         ))
     }
 
@@ -67,7 +75,8 @@ read_cif_context_data <- function(
 
     context_data <- lapply(
         urls,
-        read_context_parquet
+        read_context_parquet,
+        use_cache = use_cache
     )
 
     context_data <- do.call(rbind, context_data)

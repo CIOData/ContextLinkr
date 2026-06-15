@@ -17,6 +17,8 @@
 #' @param format Output format. Use `"long"` to return Cancer InFocus rows as
 #'   stored in the source data, or `"wide"` to return one row per geography with
 #'   one column per contextual measure definition.
+#' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
+#'   cached locally before reading.
 #'
 #' @return Currently aborts with an informative message because Cancer InFocus
 #'   retrieval is not yet implemented.
@@ -36,20 +38,27 @@ get_context <- function(
         measures = NULL,
         geography = "tract",
         year = NULL,
-        format = "long"
+        format = "long",
+        use_cache = TRUE
 ) {
     validate_context_request(
         geographies = geographies,
         measures = measures,
         geography = geography,
-        year = year
+        year = year,
+        use_cache = use_cache
     )
 
     validate_context_format(format)
 
+    if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
+        rlang::abort("`use_cache` must be a single non-missing logical value.")
+    }
+
     context_data <- read_cif_context_data(
         geography = geography,
-        geographies = geographies
+        geographies = geographies,
+        use_cache = use_cache
     )
 
     context_data <- context_data[context_data$GEOID %in% geographies, , drop = FALSE]

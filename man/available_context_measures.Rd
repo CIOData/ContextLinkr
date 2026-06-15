@@ -6,7 +6,8 @@
 \usage{
 available_context_measures(
   geography = NULL,
-  base_url = "https://cancerinfocus.org/public-data/ContextLinkr"
+  base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
+  use_cache = TRUE
 )
 }
 \arguments{
@@ -14,6 +15,9 @@ available_context_measures(
 \code{"tract"}. If \code{NULL}, measures for all geographies are returned.}
 
 \item{base_url}{Base URL for ContextLinkr public Parquet files.}
+
+\item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
+cached locally before reading.}
 }
 \value{
 A tibble containing available contextual measure metadata.

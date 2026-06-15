@@ -7,7 +7,8 @@
 read_cif_context_data(
   geography = "tract",
   geographies = NULL,
-  base_url = "https://cancerinfocus.org/public-data/ContextLinkr"
+  base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
+  use_cache = TRUE
 )
 }
 \arguments{
@@ -17,6 +18,9 @@ read_cif_context_data(
 \code{geography = "tract"} so the needed state partitions can be inferred.}
 
 \item{base_url}{Base URL for ContextLinkr public Parquet files.}
+
+\item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
+cached locally before reading.}
 }
 \value{
 A tibble containing Cancer InFocus context data.

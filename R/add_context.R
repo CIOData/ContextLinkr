@@ -14,6 +14,8 @@
 #' @param measures Optional character vector of Cancer InFocus measure
 #'   definitions to retrieve. If `NULL`, all available measures may be
 #'   retrieved.
+#' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
+#'   cached locally before reading.
 #'
 #' @return A tibble containing `.data` with selected Cancer InFocus contextual
 #'   variables and context-join metadata.
@@ -41,10 +43,15 @@
 add_context <- function(
         .data,
         tract_col = "tract_geoid",
-        measures = NULL
+        measures = NULL,
+        use_cache = TRUE
 ) {
     if (!is.data.frame(.data)) {
         rlang::abort("`.data` must be a data frame.")
+    }
+
+    if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
+        rlang::abort("`use_cache` must be a single non-missing logical value.")
     }
 
     tract_nm <- col_arg_name(rlang::enquo(tract_col))
@@ -81,7 +88,8 @@ add_context <- function(
         geographies = tract_ids,
         measures = measures,
         geography = "tract",
-        format = "wide"
+        format = "wide",
+        use_cache = use_cache
     )
 
     names(context_data)[names(context_data) == "GEOID"] <- tract_nm
