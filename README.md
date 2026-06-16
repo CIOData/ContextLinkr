@@ -432,6 +432,21 @@ source metadata with:
 context_data_sources()
 ```
 
+## Context data provenance
+
+ContextLinkr attaches lightweight provenance metadata to Cancer InFocus
+context outputs. Users can inspect this metadata with:
+
+``` r
+context <- get_context(
+  geographies = "11001006202",
+  measures = "Total Population",
+  geography = "tract"
+)
+
+context_provenance(context)
+```
+
 ## Development roadmap
 
 Implemented core functions include:

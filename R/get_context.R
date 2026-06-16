@@ -79,8 +79,15 @@ get_context <- function(
     context_data <- tibble::as_tibble(context_data)
 
     if (format == "wide") {
-        return(widen_context_data(context_data))
+        context_data <- widen_context_data(context_data)
     }
 
-    context_data
+    add_context_provenance(
+        context_data,
+        geography = geography,
+        base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
+        use_cache = use_cache,
+        refresh_cache = refresh_cache,
+        format = format
+    )
 }

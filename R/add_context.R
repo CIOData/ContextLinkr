@@ -102,9 +102,17 @@ add_context <- function(
 
     names(context_data)[names(context_data) == "GEOID"] <- tract_nm
 
-    join_context(
+    result <- join_context(
         .data,
         context_data,
         by = tract_nm
     )
+
+    attr(result, "contextlinkr_context_provenance") <- attr(
+        context_data,
+        "contextlinkr_context_provenance",
+        exact = TRUE
+    )
+
+    result
 }

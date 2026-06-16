@@ -86,7 +86,12 @@ Confirm:
 - [ ] Rebuild README.
 
 ```r
-devtools::build_readme()
+rmarkdown::render(
+  input = "README.Rmd",
+  output_format = rmarkdown::github_document(),
+  output_file = "README.md",
+  clean = TRUE
+)
 ```
 
 - [ ] Confirm vignette builds through `devtools::check()`.

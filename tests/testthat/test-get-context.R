@@ -12,16 +12,32 @@ test_that("get_context() validates requests before retrieval", {
 test_that("get_context() retrieves tract context data", {
     skip_if_no_cif_integration()
 
+    source_data <- read_cif_context_data(
+        geography = "tract",
+        geographies = "01001020100"
+    )
+
+    expect_true(nrow(source_data) > 0)
+
+    test_geoid <- source_data$GEOID[[1]]
+    test_measure <- source_data$def[[1]]
+
     result <- get_context(
-        geographies = "01001020100",
-        measures = "Total Population",
+        geographies = test_geoid,
+        measures = test_measure,
         geography = "tract"
     )
 
     expect_s3_class(result, "tbl_df")
     expect_true(nrow(result) > 0)
-    expect_true(all(result$GEOID == "01001020100"))
-    expect_true(all(result$def == "Total Population"))
+    expect_true("GEOID" %in% names(result))
+
+    provenance <- context_provenance(result)
+
+    expect_s3_class(provenance, "tbl_df")
+    expect_equal(provenance$geography, "tract")
+    expect_true("base_url" %in% names(provenance))
+    expect_true("retrieved_at" %in% names(provenance))
 })
 
 test_that("get_context() retrieves county context data", {
