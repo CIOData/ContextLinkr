@@ -422,6 +422,16 @@ get_context(
 )
 ```
 
+## Context data sources
+
+ContextLinkr retrieves hosted Cancer InFocus context files from the
+public ContextLinkr data endpoint. Users can inspect the hosted data
+source metadata with:
+
+``` r
+context_data_sources()
+```
+
 ## Development roadmap
 
 Implemented core functions include:
