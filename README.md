@@ -385,13 +385,30 @@ missing_context_keys(linked, sample_context)
 ## Context data cache
 
 ContextLinkr caches hosted Cancer InFocus context files locally by
-default to reduce repeated downloads. Users can inspect or clear the
-cache with:
+default to reduce repeated downloads. Users can inspect the cache
+location, number of cached files, cache size, and cache modification
+times with:
 
 ``` r
 context_cache_info()
+```
 
+If hosted Cancer InFocus context files have been updated, or if users
+want to force a fresh download, they can clear the local cache:
+
+``` r
 clear_context_cache(confirm = TRUE)
+```
+
+Users can also bypass the cache for a single context retrieval call:
+
+``` r
+get_context(
+  geographies = "11001006202",
+  measures = "Total Population",
+  geography = "tract",
+  use_cache = FALSE
+)
 ```
 
 ## Development roadmap

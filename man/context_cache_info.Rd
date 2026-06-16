@@ -7,12 +7,14 @@
 context_cache_info()
 }
 \value{
-A tibble with cache directory, file count, and total size in bytes.
+A tibble with cache directory, file count, total size in bytes,
+oldest cache file modification time, and newest cache file modification
+time.
 }
 \description{
 \code{context_cache_info()} reports where ContextLinkr stores cached Cancer
-InFocus context files and summarizes the number and total size of files in
-the cache.
+InFocus context files and summarizes the number, total size, and modification
+times of files in the cache.
 }
 \examples{
 context_cache_info()

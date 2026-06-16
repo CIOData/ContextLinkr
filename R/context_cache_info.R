@@ -1,10 +1,12 @@
 #' Report ContextLinkr cache information
 #'
 #' `context_cache_info()` reports where ContextLinkr stores cached Cancer
-#' InFocus context files and summarizes the number and total size of files in
-#' the cache.
+#' InFocus context files and summarizes the number, total size, and modification
+#' times of files in the cache.
 #'
-#' @return A tibble with cache directory, file count, and total size in bytes.
+#' @return A tibble with cache directory, file count, total size in bytes,
+#'   oldest cache file modification time, and newest cache file modification
+#'   time.
 #'
 #' @examples
 #' context_cache_info()
@@ -23,7 +25,9 @@ context_cache_info <- function() {
             tibble::tibble(
                 cache_dir = cache_dir,
                 files = 0L,
-                size_bytes = 0
+                size_bytes = 0,
+                oldest_modified = as.POSIXct(NA),
+                newest_modified = as.POSIXct(NA)
             )
         )
     }
@@ -39,7 +43,9 @@ context_cache_info <- function() {
             tibble::tibble(
                 cache_dir = cache_dir,
                 files = 0L,
-                size_bytes = 0
+                size_bytes = 0,
+                oldest_modified = as.POSIXct(NA),
+                newest_modified = as.POSIXct(NA)
             )
         )
     }
@@ -49,6 +55,8 @@ context_cache_info <- function() {
     tibble::tibble(
         cache_dir = cache_dir,
         files = length(cache_files),
-        size_bytes = sum(file_info$size, na.rm = TRUE)
+        size_bytes = sum(file_info$size, na.rm = TRUE),
+        oldest_modified = min(file_info$mtime, na.rm = TRUE),
+        newest_modified = max(file_info$mtime, na.rm = TRUE)
     )
 }
