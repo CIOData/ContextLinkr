@@ -19,6 +19,8 @@
 #'   one column per contextual measure definition.
 #' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
 #'   cached locally before reading.
+#' @param refresh_cache Logical. If `TRUE`, hosted files are downloaded again
+#'   even when cached copies exist. Ignored when `use_cache = FALSE`.
 #'
 #' @return Currently aborts with an informative message because Cancer InFocus
 #'   retrieval is not yet implemented.
@@ -39,14 +41,16 @@ get_context <- function(
         geography = "tract",
         year = NULL,
         format = "long",
-        use_cache = TRUE
+        use_cache = TRUE,
+        refresh_cache = FALSE
 ) {
     validate_context_request(
         geographies = geographies,
         measures = measures,
         geography = geography,
         year = year,
-        use_cache = use_cache
+        use_cache = use_cache,
+        refresh_cache = refresh_cache
     )
 
     validate_context_format(format)
@@ -55,10 +59,15 @@ get_context <- function(
         rlang::abort("`use_cache` must be a single non-missing logical value.")
     }
 
+    if (!is.logical(refresh_cache) || length(refresh_cache) != 1 || is.na(refresh_cache)) {
+        rlang::abort("`refresh_cache` must be a single non-missing logical value.")
+    }
+
     context_data <- read_cif_context_data(
         geography = geography,
         geographies = geographies,
-        use_cache = use_cache
+        use_cache = use_cache,
+        refresh_cache = refresh_cache
     )
 
     context_data <- context_data[context_data$GEOID %in% geographies, , drop = FALSE]

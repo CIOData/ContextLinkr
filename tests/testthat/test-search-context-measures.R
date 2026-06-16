@@ -62,3 +62,10 @@ test_that("search_context_measures() validates use_cache", {
         "`use_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("search_context_measures() validates refresh_cache", {
+    expect_error(
+        search_context_measures("population", refresh_cache = NA),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+})

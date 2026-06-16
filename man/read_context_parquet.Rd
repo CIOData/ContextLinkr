@@ -4,13 +4,16 @@
 \alias{read_context_parquet}
 \title{Read a Cancer InFocus context Parquet file}
 \usage{
-read_context_parquet(path, use_cache = TRUE)
+read_context_parquet(path, use_cache = TRUE, refresh_cache = FALSE)
 }
 \arguments{
 \item{path}{Local path or URL to a Parquet file.}
 
 \item{use_cache}{Logical. If \code{TRUE}, remote files are cached locally before
 reading.}
+
+\item{refresh_cache}{Logical. If \code{TRUE}, remote files are downloaded again
+even when a cached copy exists. Ignored when \code{use_cache = FALSE}.}
 }
 \value{
 A tibble containing the Parquet data.

@@ -8,7 +8,8 @@ add_context(
   .data,
   tract_col = "tract_geoid",
   measures = NULL,
-  use_cache = TRUE
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ retrieved.}
 
 \item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
 cached locally before reading.}
+
+\item{refresh_cache}{Logical. If \code{TRUE}, hosted files are downloaded again
+even when cached copies exist. Ignored when \code{use_cache = FALSE}.}
 }
 \value{
 A tibble containing \code{.data} with selected Cancer InFocus contextual

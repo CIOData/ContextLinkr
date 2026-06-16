@@ -10,6 +10,8 @@
 #' @param ignore_case Logical. If `TRUE`, search is case-insensitive.
 #' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
 #'   cached locally before reading.
+#' @param refresh_cache Logical. If `TRUE`, hosted files are downloaded again
+#'   even when cached copies exist. Ignored when `use_cache = FALSE`.
 #'
 #' @return A tibble containing matching contextual measure metadata.
 #'
@@ -26,7 +28,8 @@ search_context_measures <- function(
         query,
         geography = NULL,
         ignore_case = TRUE,
-        use_cache = TRUE
+        use_cache = TRUE,
+        refresh_cache = FALSE
 ) {
     if (missing(query)) {
         rlang::abort("`query` is required.")
@@ -48,9 +51,14 @@ search_context_measures <- function(
         rlang::abort("`use_cache` must be a single non-missing logical value.")
     }
 
+    if (!is.logical(refresh_cache) || length(refresh_cache) != 1 || is.na(refresh_cache)) {
+        rlang::abort("`refresh_cache` must be a single non-missing logical value.")
+    }
+
     measures <- available_context_measures(
         geography = geography,
-        use_cache = use_cache
+        use_cache = use_cache,
+        refresh_cache = refresh_cache
     )
 
     search_cols <- intersect(

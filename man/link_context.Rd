@@ -22,6 +22,7 @@ link_context(
   context_format = "wide",
   include_context = FALSE,
   context_cache = TRUE,
+  context_refresh_cache = FALSE,
   cache = TRUE
 )
 }
@@ -75,6 +76,10 @@ back to the linked records. Defaults to \code{FALSE}.}
 
 \item{context_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files
 are cached locally before reading when \code{include_context = TRUE}.}
+
+\item{context_refresh_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus
+context files are downloaded again even when cached copies exist. Ignored
+when \code{context_cache = FALSE}.}
 
 \item{cache}{Logical. Whether to use tigris caching during tract lookup.
 Passed to \code{\link[=id_tract]{id_tract()}}.}

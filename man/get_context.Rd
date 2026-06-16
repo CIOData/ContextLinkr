@@ -10,7 +10,8 @@ get_context(
   geography = "tract",
   year = NULL,
   format = "long",
-  use_cache = TRUE
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ one column per contextual measure definition.}
 
 \item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
 cached locally before reading.}
+
+\item{refresh_cache}{Logical. If \code{TRUE}, hosted files are downloaded again
+even when cached copies exist. Ignored when \code{use_cache = FALSE}.}
 }
 \value{
 Currently aborts with an informative message because Cancer InFocus

@@ -8,7 +8,8 @@ read_cif_context_data(
   geography = "tract",
   geographies = NULL,
   base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
-  use_cache = TRUE
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ read_cif_context_data(
 
 \item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
 cached locally before reading.}
+
+\item{refresh_cache}{Logical. If \code{TRUE}, hosted files are downloaded again
+even when cached copies exist. Ignored when \code{use_cache = FALSE}.}
 }
 \value{
 A tibble containing Cancer InFocus context data.

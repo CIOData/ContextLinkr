@@ -8,7 +8,8 @@ search_context_measures(
   query,
   geography = NULL,
   ignore_case = TRUE,
-  use_cache = TRUE
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ search_context_measures(
 
 \item{use_cache}{Logical. If \code{TRUE}, hosted Cancer InFocus context files are
 cached locally before reading.}
+
+\item{refresh_cache}{Logical. If \code{TRUE}, hosted files are downloaded again
+even when cached copies exist. Ignored when \code{use_cache = FALSE}.}
 }
 \value{
 A tibble containing matching contextual measure metadata.

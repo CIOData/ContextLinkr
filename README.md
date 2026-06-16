@@ -411,6 +411,17 @@ get_context(
 )
 ```
 
+Users can force a fresh download while keeping cache behavior enabled:
+
+``` r
+get_context(
+  geographies = "11001006202",
+  measures = "Total Population",
+  geography = "tract",
+  refresh_cache = TRUE
+)
+```
+
 ## Development roadmap
 
 Implemented core functions include:

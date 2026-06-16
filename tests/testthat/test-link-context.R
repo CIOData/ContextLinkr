@@ -410,3 +410,16 @@ test_that("link_context() validates context_cache", {
         "`context_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("link_context() validates context_refresh_cache", {
+    expect_error(
+        link_context(
+            sample_addresses,
+            lat = latitude,
+            lon = longitude,
+            state = "DC",
+            context_refresh_cache = NA
+        ),
+        "`context_refresh_cache` must be a single non-missing logical value"
+    )
+})

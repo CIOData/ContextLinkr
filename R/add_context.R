@@ -16,6 +16,8 @@
 #'   retrieved.
 #' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
 #'   cached locally before reading.
+#' @param refresh_cache Logical. If `TRUE`, hosted files are downloaded again
+#'   even when cached copies exist. Ignored when `use_cache = FALSE`.
 #'
 #' @return A tibble containing `.data` with selected Cancer InFocus contextual
 #'   variables and context-join metadata.
@@ -44,7 +46,8 @@ add_context <- function(
         .data,
         tract_col = "tract_geoid",
         measures = NULL,
-        use_cache = TRUE
+        use_cache = TRUE,
+        refresh_cache = FALSE
 ) {
     if (!is.data.frame(.data)) {
         rlang::abort("`.data` must be a data frame.")
@@ -52,6 +55,10 @@ add_context <- function(
 
     if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
         rlang::abort("`use_cache` must be a single non-missing logical value.")
+    }
+
+    if (!is.logical(refresh_cache) || length(refresh_cache) != 1 || is.na(refresh_cache)) {
+        rlang::abort("`refresh_cache` must be a single non-missing logical value.")
     }
 
     tract_nm <- col_arg_name(rlang::enquo(tract_col))
@@ -89,7 +96,8 @@ add_context <- function(
         measures = measures,
         geography = "tract",
         format = "wide",
-        use_cache = use_cache
+        use_cache = use_cache,
+        refresh_cache = refresh_cache
     )
 
     names(context_data)[names(context_data) == "GEOID"] <- tract_nm

@@ -46,6 +46,9 @@
 #'   joining.
 #' @param context_cache Logical. If `TRUE`, hosted Cancer InFocus context files
 #'   are cached locally before reading when `include_context = TRUE`.
+#' @param context_refresh_cache Logical. If `TRUE`, hosted Cancer InFocus
+#'   context files are downloaded again even when cached copies exist. Ignored
+#'   when `context_cache = FALSE`.
 #' @param cache Logical. Whether to use tigris caching during tract lookup.
 #'   Passed to [id_tract()].
 #'
@@ -93,6 +96,7 @@ link_context <- function(
         context_format = "wide",
         include_context = FALSE,
         context_cache = TRUE,
+        context_refresh_cache = FALSE,
         cache = TRUE
 ) {
     if (!is.data.frame(.data)) {
@@ -109,6 +113,12 @@ link_context <- function(
 
     if (!is.logical(context_cache) || length(context_cache) != 1 || is.na(context_cache)) {
         rlang::abort("`context_cache` must be a single non-missing logical value.")
+    }
+
+    if (!is.logical(context_refresh_cache) ||
+        length(context_refresh_cache) != 1 ||
+        is.na(context_refresh_cache)) {
+        rlang::abort("`context_refresh_cache` must be a single non-missing logical value.")
     }
 
     validate_context_format(context_format)
@@ -231,7 +241,8 @@ link_context <- function(
             result,
             tract_col = "tract_geoid",
             measures = context_measures,
-            use_cache = context_cache
+            use_cache = context_cache,
+            refresh_cache = context_refresh_cache
         )
     }
 

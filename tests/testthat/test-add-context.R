@@ -60,3 +60,13 @@ test_that("add_context() validates use_cache", {
         "`use_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("add_context() validates refresh_cache", {
+    expect_error(
+        add_context(
+            tibble::tibble(id = 1, tract_geoid = "11001006202"),
+            refresh_cache = NA
+        ),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+})

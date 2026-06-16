@@ -40,3 +40,10 @@ test_that("available_context_measures() validates use_cache", {
         "`use_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("available_context_measures() validates refresh_cache", {
+    expect_error(
+        available_context_measures(refresh_cache = NA),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+})

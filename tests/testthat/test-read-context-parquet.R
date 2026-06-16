@@ -33,3 +33,15 @@ test_that("read_context_parquet() validates use_cache", {
         "`use_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("read_context_parquet() validates refresh_cache", {
+    expect_error(
+        read_context_parquet("file.parquet", refresh_cache = NA),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+
+    expect_error(
+        read_context_parquet("file.parquet", refresh_cache = c(TRUE, FALSE)),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+})

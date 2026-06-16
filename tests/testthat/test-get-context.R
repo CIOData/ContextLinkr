@@ -78,3 +78,15 @@ test_that("get_context() validates use_cache", {
         "`use_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("get_context() validates refresh_cache", {
+    expect_error(
+        get_context(
+            geographies = "11001006202",
+            measures = "Total Population",
+            geography = "tract",
+            refresh_cache = NA
+        ),
+        "`refresh_cache` must be a single non-missing logical value"
+    )
+})

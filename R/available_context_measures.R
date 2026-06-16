@@ -11,6 +11,8 @@
 #' @param base_url Base URL for ContextLinkr public Parquet files.
 #' @param use_cache Logical. If `TRUE`, hosted Cancer InFocus context files are
 #'   cached locally before reading.
+#' @param refresh_cache Logical. If `TRUE`, hosted files are downloaded again
+#'   even when cached copies exist. Ignored when `use_cache = FALSE`.
 #'
 #' @return A tibble containing available contextual measure metadata.
 #'
@@ -26,7 +28,8 @@
 available_context_measures <- function(
         geography = NULL,
         base_url = "https://cancerinfocus.org/public-data/ContextLinkr",
-        use_cache = TRUE
+        use_cache = TRUE,
+        refresh_cache = FALSE
 ) {
     if (!is.null(geography)) {
         validate_context_geography(geography)
@@ -36,6 +39,10 @@ available_context_measures <- function(
         rlang::abort("`use_cache` must be a single non-missing logical value.")
     }
 
+    if (!is.logical(refresh_cache) || length(refresh_cache) != 1 || is.na(refresh_cache)) {
+        rlang::abort("`refresh_cache` must be a single non-missing logical value.")
+    }
+
     url <- cif_context_url(
         geography = "measures",
         base_url = base_url
@@ -43,7 +50,8 @@ available_context_measures <- function(
 
     measures <- read_context_parquet(
         url,
-        use_cache = use_cache
+        use_cache = use_cache,
+        refresh_cache = refresh_cache
     )
 
     if (!is.null(geography) && "geography" %in% names(measures)) {
