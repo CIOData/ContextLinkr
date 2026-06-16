@@ -2,6 +2,8 @@
 
 export(add_context)
 export(available_context_measures)
+export(clear_context_cache)
+export(context_cache_info)
 export(context_failures)
 export(context_successes)
 export(context_summary)

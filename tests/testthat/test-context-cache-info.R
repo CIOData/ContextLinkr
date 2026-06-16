@@ -1,0 +1,11 @@
+test_that("context_cache_info() returns cache summary", {
+    result <- context_cache_info()
+
+    expect_s3_class(result, "tbl_df")
+    expect_true("cache_dir" %in% names(result))
+    expect_true("files" %in% names(result))
+    expect_true("size_bytes" %in% names(result))
+    expect_equal(nrow(result), 1L)
+    expect_type(result$cache_dir, "character")
+    expect_true(is.numeric(result$size_bytes))
+})

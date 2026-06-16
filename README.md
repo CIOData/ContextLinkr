@@ -382,6 +382,18 @@ missing from the contextual data:
 missing_context_keys(linked, sample_context)
 ```
 
+## Context data cache
+
+ContextLinkr caches hosted Cancer InFocus context files locally by
+default to reduce repeated downloads. Users can inspect or clear the
+cache with:
+
+``` r
+context_cache_info()
+
+clear_context_cache(confirm = TRUE)
+```
+
 ## Development roadmap
 
 Implemented core functions include:
