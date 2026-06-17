@@ -55,6 +55,11 @@ get_context <- function(
 
     validate_context_format(format)
 
+    validate_context_state(
+        geographies = geographies,
+        geography = geography
+    )
+
     if (!is.logical(use_cache) || length(use_cache) != 1 || is.na(use_cache)) {
         rlang::abort("`use_cache` must be a single non-missing logical value.")
     }

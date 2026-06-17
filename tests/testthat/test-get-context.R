@@ -128,3 +128,29 @@ test_that("get_context wide output returns one row per tract GEOID", {
     expect_true("GEOID" %in% names(out))
     expect_equal(anyDuplicated(out$GEOID), 0L)
 })
+
+test_that("get_context errors clearly for malformed tract GEOIDs", {
+    expect_error(
+        get_context(
+            geographies = "not_a_geoid",
+            geography = "tract",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "11-digit Census tract GEOIDs"
+    )
+})
+
+test_that("get_context errors clearly for unsupported tract state FIPS", {
+    expect_error(
+        get_context(
+            geographies = "99999999999",
+            geography = "tract",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "unsupported state FIPS code"
+    )
+})
