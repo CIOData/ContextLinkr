@@ -3,6 +3,7 @@
 ### Current development
 
 * Confirmed clean install-from-GitHub smoke test for `get_context()` and `add_context()` using hosted Cancer InFocus tract context data.
+* Completed an initial friendly collaborator beta smoke test from the `v0.1.0-beta.1` GitHub tag, covering installation, Cancer InFocus context retrieval, `add_context()`, cache/source helpers, and provenance output.
 
 ### Collaborator beta hardening
 
