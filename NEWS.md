@@ -1,6 +1,12 @@
-# ContextLinkr (development version)
+# ContextLinkr 0.1.0.9000
 
-## Collaborator beta hardening
+### Collaborator beta hardening
+
+* Added hosted Cancer InFocus contextual data retrieval through `get_context()` and `add_context()`.
+* Added local caching, cache inspection, and cache-clearing support for hosted context files.
+* Added source metadata and provenance helpers through `context_data_sources()` and `context_provenance()`.
+* Fixed wide-format context output so tract labels from different source files do not create duplicate rows per `GEOID`.
+* Added opt-in live Cancer InFocus integration tests using `CONTEXTLINKR_RUN_CIF_INTEGRATION=true`.
 
 ### Core workflows
 

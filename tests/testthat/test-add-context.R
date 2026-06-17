@@ -70,3 +70,29 @@ test_that("add_context() validates refresh_cache", {
         "`refresh_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("add_context joins all default context measures without duplicate tract keys", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    test_records <- data.frame(
+        person_id = c("test_001", "test_002"),
+        tract_geoid = c("21067003600", "21067004205")
+    )
+
+    out <- add_context(
+        .data = test_records,
+        tract_col = "tract_geoid",
+        measures = NULL,
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), nrow(test_records))
+    expect_true("person_id" %in% names(out))
+    expect_true("tract_geoid" %in% names(out))
+    expect_gt(ncol(out), ncol(test_records))
+    expect_equal(anyDuplicated(out$tract_geoid), 0L)
+})

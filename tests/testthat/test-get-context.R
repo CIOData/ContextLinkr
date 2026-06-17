@@ -106,3 +106,25 @@ test_that("get_context() validates refresh_cache", {
         "`refresh_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("get_context wide output returns one row per tract GEOID", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    tracts <- c("21067003600", "21067004205")
+
+    out <- get_context(
+        geographies = tracts,
+        geography = "tract",
+        measures = NULL,
+        format = "wide",
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), length(tracts))
+    expect_true("GEOID" %in% names(out))
+    expect_equal(anyDuplicated(out$GEOID), 0L)
+})
