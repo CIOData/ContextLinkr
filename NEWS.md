@@ -1,5 +1,9 @@
 # ContextLinkr 0.1.0.9000
 
+### Current development
+
+* Confirmed clean install-from-GitHub smoke test for `get_context()` and `add_context()` using hosted Cancer InFocus tract context data.
+
 ### Collaborator beta hardening
 
 * Added hosted Cancer InFocus contextual data retrieval through `get_context()` and `add_context()`.
