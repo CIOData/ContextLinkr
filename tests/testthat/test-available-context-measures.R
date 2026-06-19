@@ -49,6 +49,11 @@ test_that("available_context_measures() validates refresh_cache", {
 })
 
 test_that("available_context_measures includes user-facing measure definitions", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "Set CONTEXTLINKR_RUN_CIF_INTEGRATION=true to run live Cancer InFocus integration tests."
+    )
+
     out <- available_context_measures()
 
     expect_s3_class(out, "data.frame")

@@ -193,6 +193,11 @@ test_that("get_context retrieves a requested valid measure definition", {
 })
 
 test_that("get_context errors clearly for unsupported measures", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "Set CONTEXTLINKR_RUN_CIF_INTEGRATION=true to run live Cancer InFocus integration tests."
+    )
+
     expect_error(
         get_context(
             geographies = "21067003600",

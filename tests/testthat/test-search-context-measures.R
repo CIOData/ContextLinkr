@@ -71,6 +71,11 @@ test_that("search_context_measures() validates refresh_cache", {
 })
 
 test_that("search_context_measures returns an empty result for no matches", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "Set CONTEXTLINKR_RUN_CIF_INTEGRATION=true to run live Cancer InFocus integration tests."
+    )
+
     out <- search_context_measures("zzzz_not_a_real_measure")
 
     expect_s3_class(out, "data.frame")
