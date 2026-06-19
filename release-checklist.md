@@ -1,180 +1,95 @@
 # ContextLinkr release checklist
 
-Use this checklist before tagging an internal alpha, beta, or collaborator-facing
-release.
+## Collaborator beta release
 
-## 1. Confirm development status
+Use this checklist before tagging a collaborator-beta version such as `v0.1.0-beta.2`.
 
-- [ ] Confirm all intended changes for this release are committed or staged.
-- [ ] Review open issues and pull requests.
-- [ ] Confirm whether this is an internal alpha, beta, or stable release.
-- [ ] Confirm whether the release should include live Cancer InFocus integration validation.
+### Code and tests
 
-## 2. Review package metadata
+- [ ] `devtools::document()` runs successfully.
+- [ ] `devtools::test()` passes with default settings.
+- [ ] `devtools::check()` passes with default settings.
+- [ ] Live Cancer InFocus integration tests pass locally with `CONTEXTLINKR_RUN_CIF_INTEGRATION=true`.
+- [ ] GitHub Actions pass on the default branch.
+- [ ] No live hosted-data tests run by default in CI unless explicitly enabled.
 
-- [ ] Confirm `DESCRIPTION` version is correct.
-- [ ] Confirm `DESCRIPTION` description reflects current functionality.
-- [ ] Confirm package dependencies are still needed.
-- [ ] Confirm no unused vignette dependencies are present.
-- [ ] Confirm `NEWS.md` has an entry for the release.
+### Documentation
 
-## 3. Review exported functions
+- [ ] README reflects the current primary workflow.
+- [ ] README installation instructions use the current beta tag.
+- [ ] Workflow vignette reflects Cancer InFocus context retrieval as the primary workflow.
+- [ ] `collaborator-testing.md` uses the current beta tag.
+- [ ] GitHub issue templates are current.
+- [ ] `NEWS.md` summarizes changes since the previous beta tag.
 
-Check exported functions:
+### Beta testing
 
-```r
-devtools::load_all()
+- [ ] Clean install-from-GitHub smoke test completed from a temporary directory.
+- [ ] Collaborator test script completed successfully.
+- [ ] Feedback tracking issue created or updated.
+- [ ] Known failure paths reviewed or documented.
 
-getNamespaceExports("ContextLinkr")
-```
-
-Confirm only user-facing functions are exported.
-
-Internal helpers should not be exported, including functions such as:
-
-```r
-c(
-  "cif_context_url",
-  "read_cif_context_data",
-  "read_context_parquet",
-  "context_cache_path",
-  "is_remote_path",
-  "validate_context_request",
-  "validate_context_geography",
-  "validate_context_format",
-  "widen_context_data"
-)
-```
-
-## 4. Run local package checks
+### Tagging
 
 ```r
-devtools::document()
-devtools::test()
-devtools::check()
-```
+gert::git_branch_checkout("master")
 
-Confirm:
+gert::git_pull()
 
-- [ ] 0 errors
-- [ ] 0 warnings
-- [ ] only expected notes, if any
-
-## 5. Run live Cancer InFocus integration tests
-
-Run this when the release includes or depends on hosted Cancer InFocus context
-data.
-
-```r
-Sys.setenv(CONTEXTLINKR_RUN_CIF_INTEGRATION = "true")
-
-devtools::test()
-
-Sys.unsetenv("CONTEXTLINKR_RUN_CIF_INTEGRATION")
-```
-
-Confirm:
-
-- [ ] live `available_context_measures()` tests pass
-- [ ] live `search_context_measures()` tests pass
-- [ ] live `get_context()` tests pass
-- [ ] live `add_context()` tests pass
-- [ ] live `link_context(include_context = TRUE)` tests pass
-
-## 6. Check documentation artifacts
-
-- [ ] Rebuild README.
-
-```r
-rmarkdown::render(
-  input = "README.Rmd",
-  output_format = rmarkdown::github_document(),
-  output_file = "README.md",
-  clean = TRUE
-)
-```
-
-- [ ] Confirm vignette builds through `devtools::check()`.
-- [ ] Review README examples.
-- [ ] Review vignette examples.
-- [ ] Confirm privacy/data-flow language is still accurate.
-- [ ] Confirm collaborator testing guide is current.
-
-## 7. Review GitHub infrastructure
-
-- [ ] Confirm GitHub Actions checks pass.
-- [ ] Confirm issue templates are current.
-- [ ] Confirm pull request template is current.
-- [ ] Confirm collaborator testing guide links/instructions are correct.
-
-## 8. Commit release preparation changes
-
-```r
 gert::git_status()
 
-gert::git_add(".")
-
-gert::git_commit("Prepare release")
-```
-
-## 9. Tag the release
-
-Use a tag name appropriate to the release stage.
-
-Examples:
-
-```r
 gert::git_tag_create(
-  name = "v0.1.0-alpha",
-  message = "Internal alpha release"
+  name = "v0.1.0-beta.X",
+  message = "ContextLinkr collaborator beta X"
 )
-```
 
-```r
-gert::git_tag_create(
-  name = "v0.2.0-beta",
-  message = "Collaborator beta release"
-)
-```
-
-Confirm the tag exists:
-
-```r
-gert::git_tag_list()
-```
-
-## 10. Push commit and tag
-
-```r
 gert::git_push()
 
-gert::git_push(tags = TRUE)
+gert::git_push(refspec = "refs/tags/v0.1.0-beta.X")
 ```
 
-## 11. Start the next development version
+## Post-tag smoke test
 
-Update `DESCRIPTION` to the next development version, such as:
-
-```text
-Version: 0.1.0.9000
-```
-
-Then commit and push:
+After pushing the tag, install the tagged version in a clean temporary location.
 
 ```r
-gert::git_add("DESCRIPTION")
+smoke_dir <- file.path(tempdir(), "contextlinkr-beta-smoke-test")
 
-gert::git_commit("Bump development version")
+if (dir.exists(smoke_dir)) {
+  unlink(smoke_dir, recursive = TRUE, force = TRUE)
+}
 
-gert::git_push()
+dir.create(smoke_dir, recursive = TRUE)
+setwd(smoke_dir)
+
+remotes::install_github(
+  "CIOData/ContextLinkr@v0.1.0-beta.X",
+  upgrade = "never",
+  dependencies = TRUE,
+  build_vignettes = FALSE
+)
+
+library(ContextLinkr)
+
+packageVersion("ContextLinkr")
+
+test_records <- data.frame(
+  person_id = c("test_001", "test_002"),
+  tract_geoid = c("21067003600", "21067004205")
+)
+
+test_added <- add_context(
+  .data = test_records,
+  tract_col = "tract_geoid",
+  measures = "Total Population",
+  use_cache = TRUE,
+  refresh_cache = FALSE
+)
+
+nrow(test_added)
+anyDuplicated(test_added$tract_geoid)
+"Total Population" %in% names(test_added)
+
+context_provenance(test_added)
 ```
 
-## 12. Optional collaborator notification
-
-When sending the release to collaborators, include:
-
-- GitHub repository link;
-- release tag or commit SHA;
-- installation command;
-- collaborator testing guide link;
-- request to submit feedback using the GitHub issue templates.
