@@ -172,3 +172,36 @@ test_that("get_context errors clearly when no context rows match requested geogr
         "No Cancer InFocus context rows were found"
     )
 })
+
+test_that("get_context retrieves a requested valid measure definition", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    out <- get_context(
+        geographies = "21067003600",
+        measures = "Total Population",
+        geography = "tract",
+        format = "wide",
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), 1L)
+    expect_true("Total Population" %in% names(out))
+})
+
+test_that("get_context errors clearly for unsupported measures", {
+    expect_error(
+        get_context(
+            geographies = "21067003600",
+            measures = "not_a_real_measure",
+            geography = "tract",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "unsupported value"
+    )
+})

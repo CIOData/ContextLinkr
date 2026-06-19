@@ -69,3 +69,10 @@ test_that("search_context_measures() validates refresh_cache", {
         "`refresh_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("search_context_measures returns an empty result for no matches", {
+    out <- search_context_measures("zzzz_not_a_real_measure")
+
+    expect_s3_class(out, "data.frame")
+    expect_equal(nrow(out), 0L)
+})

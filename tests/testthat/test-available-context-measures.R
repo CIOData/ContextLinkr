@@ -47,3 +47,11 @@ test_that("available_context_measures() validates refresh_cache", {
         "`refresh_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("available_context_measures includes user-facing measure definitions", {
+    out <- available_context_measures()
+
+    expect_s3_class(out, "data.frame")
+    expect_true("def" %in% names(out))
+    expect_gt(nrow(out), 0L)
+})
