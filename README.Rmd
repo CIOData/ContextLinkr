@@ -4,20 +4,37 @@ output: github_document
 
 # ContextLinkr
 
-ContextLinkr is an R package for linking individual-level records to geographic
-contextual data for multilevel health research.
+ContextLinkr is an R package for linking individual-level records to place-based contextual data for multilevel health research, implementation science, and population health analytics.
 
-The package currently supports address geocoding, Census tract identification,
-end-to-end record linkage, and joining linked records to user-supplied
-contextual datasets. Future development will add optional retrieval of selected
-contextual data sources.
+The package supports address geocoding, Census tract identification, end-to-end record linkage, and enrichment with hosted Cancer InFocus contextual data (https://cancerinfocus.org). In the typical workflow, users provide individual-level records, ContextLinkr identifies Census tract GEOIDs when needed, and contextual measures are retrieved from Cancer InFocus rather than supplied manually by the user.
+
+ContextLinkr also includes lower-level helpers for joining user-supplied contextual datasets, but the primary end-user workflow is designed around Cancer InFocus context retrieval, cache controls, source metadata, and output provenance.
 
 ## Installation
 
-```{r, eval=FALSE}
-# Not yet available from CRAN.
-# Development installation instructions will be added after the GitHub
-# repository is public.
+ContextLinkr is currently in collaborator-beta development and can be installed from GitHub.
+
+```r
+install.packages("remotes")
+
+remotes::install_github(
+  "CIOData/ContextLinkr@v0.1.0-beta.2",
+  upgrade = "never",
+  dependencies = TRUE,
+  build_vignettes = FALSE
+)
+```
+
+Load the package with:
+
+```r
+library(ContextLinkr)
+```
+
+To confirm the installed version:
+
+```r
+packageVersion("ContextLinkr")
 ```
 
 ## Development status

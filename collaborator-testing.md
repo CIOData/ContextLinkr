@@ -11,7 +11,12 @@ Install the development version from GitHub:
 ```r
 install.packages("remotes")
 
-remotes::install_github("CIOData/ContextLinkr")
+remotes::install_github(
+  "CIOData/ContextLinkr@v0.1.0-beta.2",
+  upgrade = "never",
+  dependencies = TRUE,
+  build_vignettes = FALSE
+)
 ```
 
 ## 2. Load the package
@@ -123,30 +128,30 @@ Please submit feedback using the GitHub issue template titled
 "Collaborator feedback". If you encountered a reproducible error, use the
 "Bug report" template instead.
 
-## Troubleshooting hosted context data
+## Troubleshooting
 
-ContextLinkr retrieves Cancer InFocus context data from hosted files. If context retrieval fails, first check:
-
-1. that your internet connection is active;
-2. that your institution or VPN is not blocking access to `cancerinfocus.org`;
-3. that the requested tract GEOIDs are valid 11-digit Census tract GEOIDs;
-4. that the requested measures appear in `available_context_measures()`.
-
-Useful commands:
+If installation or context retrieval fails, please include the following in your feedback:
 
 ```r
+packageVersion("ContextLinkr")
+R.version.string
+Sys.info()[c("sysname", "release", "machine")]
+
 context_cache_info()
-
 context_data_sources()
-
-search_context_measures("poverty")
-
-clear_context_cache(confirm = TRUE)
 ```
 
-To force ContextLinkr to re-download hosted context data:
+Common checks:
+
+- confirm that your internet connection is active;
+- confirm that your network or VPN is not blocking `cancerinfocus.org`;
+- confirm that tract GEOIDs are 11-digit Census tract GEOIDs;
+- use `available_context_measures()` or `search_context_measures()` to find valid measure names;
+- clear and rebuild the context cache if cached files appear stale.
 
 ```r
+clear_context_cache(confirm = TRUE)
+
 get_context(
   geographies = "21067003600",
   measures = "Total Population",
