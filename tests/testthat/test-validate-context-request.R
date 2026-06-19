@@ -52,3 +52,27 @@ test_that("validate_context_request() rejects unsupported measures with suggesti
         "search_context_measures"
     )
 })
+
+test_that("get_context requires logical cache arguments", {
+    expect_error(
+        get_context(
+            geographies = "21067003600",
+            geography = "tract",
+            format = "wide",
+            use_cache = "yes",
+            refresh_cache = FALSE
+        ),
+        "`use_cache` must be"
+    )
+
+    expect_error(
+        get_context(
+            geographies = "21067003600",
+            geography = "tract",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = "yes"
+        ),
+        "`refresh_cache` must be"
+    )
+})

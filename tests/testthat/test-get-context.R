@@ -205,3 +205,29 @@ test_that("get_context errors clearly for unsupported measures", {
         "unsupported value"
     )
 })
+
+test_that("get_context errors clearly for unsupported format", {
+    expect_error(
+        get_context(
+            geographies = "21067003600",
+            geography = "tract",
+            format = "not_a_format",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "format"
+    )
+})
+
+test_that("get_context errors clearly for unsupported geography", {
+    expect_error(
+        get_context(
+            geographies = "21067003600",
+            geography = "block_group",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "geography"
+    )
+})
