@@ -96,3 +96,71 @@ test_that("add_context joins all default context measures without duplicate trac
     expect_gt(ncol(out), ncol(test_records))
     expect_equal(anyDuplicated(out$tract_geoid), 0L)
 })
+
+test_that("add_context returns unjoined rows when all tract IDs are missing", {
+    records <- data.frame(
+        person_id = c("test_001", "test_002"),
+        tract_geoid = c(NA_character_, "")
+    )
+
+    out <- add_context(
+        .data = records,
+        tract_col = "tract_geoid",
+        measures = NULL,
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), nrow(records))
+    expect_true(".context_joined" %in% names(out))
+    expect_true(all(!out$.context_joined))
+})
+
+test_that("add_context preserves rows with missing tract IDs when some tracts join", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    records <- data.frame(
+        person_id = c("test_001", "test_002", "test_003", "test_004"),
+        tract_geoid = c("21067003600", NA_character_, "", "21067004205")
+    )
+
+    out <- add_context(
+        .data = records,
+        tract_col = "tract_geoid",
+        measures = NULL,
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), nrow(records))
+    expect_equal(out$person_id, records$person_id)
+    expect_true(".context_joined" %in% names(out))
+    expect_equal(sum(out$.context_joined), 2L)
+})
+
+test_that("add_context allows multiple records in the same tract", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    records <- data.frame(
+        person_id = c("test_001", "test_002", "test_003"),
+        tract_geoid = c("21067003600", "21067003600", "21067004205")
+    )
+
+    out <- add_context(
+        .data = records,
+        tract_col = "tract_geoid",
+        measures = NULL,
+        use_cache = TRUE,
+        refresh_cache = FALSE
+    )
+
+    expect_equal(nrow(out), nrow(records))
+    expect_equal(out$person_id, records$person_id)
+    expect_true(all(out$.context_joined))
+})
