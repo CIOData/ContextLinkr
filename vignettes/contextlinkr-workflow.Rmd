@@ -17,39 +17,70 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-ContextLinkr supports workflows that link individual-level records to place-based
-contextual measures. The typical workflow is:
+This vignette demonstrates the main ContextLinkr workflow for linking
+individual-level records to place-based contextual measures. In the typical
+workflow, users start with individual-level records, identify Census tract GEOIDs
+through address geocoding and tract linkage when needed, and then add hosted
+Cancer InFocus contextual measures with `add_context()`.
 
-1. Start with records that contain addresses, latitude/longitude coordinates, or
-   Census tract GEOIDs.
-2. Identify Census tract geography with `link_context()` or `id_tract()`.
-3. Add selected Cancer InFocus contextual measures with `add_context()` or
+ContextLinkr also includes lower-level helpers for joining user-supplied
+contextual datasets, but those helpers are intended for advanced or transitional
+workflows. Most users should rely on Cancer InFocus context retrieval so
+contextual measures, source metadata, cache behavior, and output provenance are
+handled consistently.
+
+The typical workflow is:
+
+1. Start with individual-level records that contain addresses, latitude/longitude
+   coordinates, or existing Census tract GEOIDs.
+2. Identify Census tract GEOIDs with `link_context()` or `id_tract()` when tract
+   GEOIDs are not already available.
+3. Review linkage results with summary, success, and failure helpers.
+4. Add selected Cancer InFocus contextual measures with `add_context()` or
    `link_context(include_context = TRUE)`.
-4. Review linkage and context-joining results with summary helpers.
+5. Inspect source metadata, cache information, and output provenance.
 
 This vignette uses `eval = FALSE` examples so that it does not send address data
 to external services or retrieve hosted data during package checks.
 
-ContextLinkr is under active development. Function names, arguments, and
-output structures may change before a stable release. For collaborator
-testing, use a tagged release or a specific Git commit when possible.
+ContextLinkr is under active development. Function names, arguments, and output
+structures may change before a stable release. For collaborator testing, use a
+tagged release or a specific Git commit when possible.
+
+## Start with individual-level records
+
+For beta testing and examples, use synthetic records or public geography
+identifiers. Do not use patient, participant, or identifiable address-level data
+when testing package installation or basic workflows.
+
+```{r example-records}
+library(ContextLinkr)
+
+records <- data.frame(
+  person_id = c("test_001", "test_002"),
+  tract_geoid = c("21067003600", "21067004205")
+)
+
+records
+```
+
+If your records already contain Census tract GEOIDs, you can skip geocoding and
+tract identification and go directly to `add_context()`.
 
 ## Link records to Census tracts
 
-If records already contain latitude and longitude, `link_context()` can identify
-Census tracts without sending address fields to a geocoder.
+If records contain latitude and longitude, `link_context()` can identify Census
+tracts without sending address fields to a geocoder.
 
 ```{r link-coordinates}
-library(ContextLinkr)
-
-records <- tibble::tibble(
-  id = 1,
+coordinate_records <- data.frame(
+  person_id = "test_001",
   latitude = 38.8977,
   longitude = -77.0365
 )
 
 linked <- link_context(
-  records,
+  coordinate_records,
   lat = latitude,
   lon = longitude,
   state = "DC"
@@ -63,8 +94,13 @@ geocode records before tract identification. Because this sends address data to
 an external geocoding service, `confirm_external = TRUE` is required.
 
 ```{r link-addresses}
+address_records <- data.frame(
+  person_id = "test_001",
+  address = "1600 Pennsylvania Ave NW, Washington, DC 20500"
+)
+
 linked_from_address <- link_context(
-  sample_addresses,
+  address_records,
   address = address,
   state = "DC",
   geocoder = "census_single",
@@ -90,39 +126,47 @@ Use `available_context_measures()` to review available Cancer InFocus contextual
 measure definitions.
 
 ```{r available-measures}
-available_context_measures("tract")
+available_context_measures()
 ```
 
 Use `search_context_measures()` to search measure metadata by keyword.
 
 ```{r search-measures}
-search_context_measures("population", geography = "tract")
+search_context_measures("population")
 ```
 
-The `def` column contains the values to pass to `measures` or
-`context_measures`.
+The `def` column contains the user-facing measure definitions to pass to
+`measures` or `context_measures`.
 
-## Add context to linked records
+## Add Cancer InFocus context to records
 
 If records already contain a tract GEOID column, use `add_context()` to retrieve
-Cancer InFocus contextual variables and join them to the records.
+Cancer InFocus contextual measures and join them to the records.
 
 ```{r add-context}
-linked_with_context <- add_context(
-  linked,
-  tract_col = tract_geoid,
-  measures = "Total Population"
+records_with_context <- add_context(
+  .data = records,
+  tract_col = "tract_geoid",
+  measures = c("Total Population", "Living Below Poverty"),
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 
-linked_with_context
+records_with_context
 ```
 
 Review context-joining results with the context summary helpers.
 
 ```{r context-summary}
-context_summary(linked_with_context)
-context_successes(linked_with_context)
-context_failures(linked_with_context)
+context_summary(records_with_context)
+context_successes(records_with_context)
+context_failures(records_with_context)
+```
+
+Inspect provenance for the contextual measures that were added.
+
+```{r context-provenance}
+context_provenance(records_with_context)
 ```
 
 ## Run the end-to-end workflow in one call
@@ -132,7 +176,7 @@ linkage.
 
 ```{r end-to-end}
 linked_with_context <- link_context(
-  records,
+  coordinate_records,
   lat = latitude,
   lon = longitude,
   state = "DC",
@@ -141,6 +185,8 @@ linked_with_context <- link_context(
 )
 
 linked_with_context
+
+context_provenance(linked_with_context)
 ```
 
 ## Retrieve context directly
@@ -150,10 +196,12 @@ specific geography IDs.
 
 ```{r get-context}
 tract_context <- get_context(
-  geographies = "11001006202",
+  geographies = c("21067003600", "21067004205"),
   measures = "Total Population",
   geography = "tract",
-  format = "wide"
+  format = "wide",
+  use_cache = TRUE,
+  refresh_cache = FALSE
 )
 
 tract_context
@@ -161,6 +209,77 @@ tract_context
 
 Use `format = "long"` when you want metadata-rich rows suitable for inspection or
 analysis, and `format = "wide"` when you want one row per geography for joining.
+
+```{r get-context-long}
+tract_context_long <- get_context(
+  geographies = c("21067003600", "21067004205"),
+  measures = "Total Population",
+  geography = "tract",
+  format = "long",
+  use_cache = TRUE,
+  refresh_cache = FALSE
+)
+
+tract_context_long
+```
+
+## Inspect cache and source metadata
+
+ContextLinkr can cache hosted Cancer InFocus context files locally. Cache helpers
+are useful for troubleshooting and for confirming what has been downloaded.
+
+```{r cache-info}
+context_cache_info()
+```
+
+Use `context_data_sources()` to inspect hosted source metadata.
+
+```{r context-data-sources}
+context_data_sources()
+```
+
+To force a fresh download of hosted context data, use `refresh_cache = TRUE`.
+
+```{r refresh-cache}
+refreshed_context <- get_context(
+  geographies = "21067003600",
+  measures = "Total Population",
+  geography = "tract",
+  format = "wide",
+  use_cache = TRUE,
+  refresh_cache = TRUE
+)
+
+refreshed_context
+```
+
+To clear the local ContextLinkr cache, use explicit confirmation.
+
+```{r clear-cache}
+clear_context_cache(confirm = TRUE)
+```
+
+## Advanced: join a prepared context dataset
+
+Most users should use `add_context()` to retrieve and append hosted Cancer
+InFocus contextual measures. The lower-level `join_context()` helper is available
+when users already have a prepared contextual dataset with one row per geographic
+key.
+
+```{r join-context}
+prepared_context <- data.frame(
+  tract_geoid = c("21067003600", "21067004205"),
+  local_context_score = c(0.25, 0.75)
+)
+
+joined <- join_context(
+  records,
+  context = prepared_context,
+  by = "tract_geoid"
+)
+
+joined
+```
 
 ## Privacy and data flow
 
@@ -171,3 +290,6 @@ Cancer InFocus context retrieval uses geography identifiers, such as Census trac
 GEOIDs, to retrieve public contextual measures. Users should not send names,
 medical record numbers, dates of birth, street addresses, or other direct
 personal identifiers to Cancer InFocus context retrieval functions.
+
+For beta testing, do not use real patient, participant, or identifiable data.
+Use synthetic records or public example tract GEOIDs.
