@@ -1,49 +1,54 @@
 ---
 name: Bug report
-about: Report a reproducible problem with ContextLinkr
-title: "Bug: "
+about: Report a reproducible ContextLinkr problem
+title: "[Bug]: "
 labels: bug
 assignees: ""
 ---
 
-## Brief description
+## Describe the bug
 
-Describe the problem.
-
-## Reproducible example
-
-Please provide the smallest example that reproduces the problem.
-
-```r
-library(ContextLinkr)
-
-# Reproducible example here
-```
+What happened?
 
 ## Expected behavior
 
 What did you expect to happen?
 
-## Actual behavior
+## Reproducible example
 
-What happened instead?
-
-## Error or warning message
-
-Paste the full error or warning message.
+Please include the smallest code example that reproduces the issue. Do not include real patient, 
+participant, address-level, or identifiable data.
 
 ```r
-# Error/warning text here
+# Minimal reproducible example
+```
+
+## Error message
+
+Paste the full error message and traceback if available.
+
+```r
+# Error text
+rlang::last_trace()
 ```
 
 ## Session information
 
-Please paste the output of:
+```r
+packageVersion("ContextLinkr")
+R.version.string
+Sys.info()[c("sysname", "release", "machine")]
+```
+
+## ContextLinkr diagnostics
+
+If the issue involves Cancer InFocus context retrieval, cache behavior, or source metadata, please run:
 
 ```r
-sessionInfo()
+context_cache_info()
+context_data_sources()
 ```
 
 ## Additional context
 
-Add any other context that may help diagnose the problem.
+Add any other details that may help diagnose the issue.

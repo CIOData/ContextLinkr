@@ -1,8 +1,8 @@
 ---
 name: Collaborator feedback
-about: Report feedback from testing the ContextLinkr collaborator workflow
-title: "Collaborator feedback: "
-labels: feedback
+about: Share feedback from testing ContextLinkr
+title: "[Collaborator feedback]: "
+labels: beta-feedback
 assignees: ""
 ---
 
@@ -10,56 +10,55 @@ assignees: ""
 
 - Operating system:
 - R version:
-- RStudio version, if used:
-- ContextLinkr version or Git commit:
-- Installation method:
-  - [ ] `remotes::install_github()`
-  - [ ] Local install
-  - [ ] Other:
+- ContextLinkr version:
+- Installation command or tag used:
+- Date tested:
 
 ## Workflow tested
 
-Which workflow did you test?
+Please check all that apply.
 
-- [ ] Package installation
-- [ ] Coordinate-based tract linkage
-- [ ] Address-based geocoding
-- [ ] Cancer InFocus measure search
-- [ ] Cancer InFocus context retrieval
-- [ ] `add_context()`
-- [ ] `link_context(include_context = TRUE)`
-- [ ] Summary helpers
-- [ ] Other:
+- [ ] Installed ContextLinkr from GitHub
+- [ ] Loaded the package
+- [ ] Reviewed help pages
+- [ ] Ran `context_cache_info()`
+- [ ] Ran `context_data_sources()`
+- [ ] Ran `available_context_measures()`
+- [ ] Ran `search_context_measures()`
+- [ ] Ran `get_context()`
+- [ ] Ran `add_context()`
+- [ ] Ran coordinate-based tract linkage
+- [ ] Ran `link_context(include_context = TRUE)`
+- [ ] Ran address geocoding
 
-## What worked well?
+## What worked?
 
-Describe anything that was clear, useful, or worked as expected.
+Describe anything that worked as expected.
 
 ## What was confusing?
 
-Describe any unclear function names, arguments, documentation, examples, or outputs.
+Describe unclear function names, arguments, outputs, messages, or documentation.
 
-## Errors or warnings
+## Warnings or errors
 
-Paste any errors or warnings here.
+Paste any warnings or errors here.
 
 ```r
-# Paste error/warning text here
+# Paste error text or reproducible code here.
 ```
 
-## Performance
+## Output clarity
 
-Did any step feel slow?
+Were the returned objects, summaries, and provenance outputs understandable?
 
-- [ ] No
-- [ ] Yes
+## Documentation feedback
 
-If yes, which step?
+Was the README, workflow vignette, or collaborator testing guide sufficient?
 
 ## Privacy or data-flow concerns
 
-Did anything about address geocoding, external services, or Cancer InFocus context retrieval raise concerns?
+Did anything about address handling, hosted data retrieval, cache behavior, or provenance raise concerns?
 
-## Suggested improvements
+## Suggestions before broader testing
 
-Describe any changes that would make ContextLinkr easier to use.
+What is one thing that should be improved before this package is tested more broadly?
