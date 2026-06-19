@@ -154,3 +154,21 @@ test_that("get_context errors clearly for unsupported tract state FIPS", {
         "unsupported state FIPS code"
     )
 })
+
+test_that("get_context errors clearly when no context rows match requested geographies", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "CIF integration tests are opt-in."
+    )
+
+    expect_error(
+        get_context(
+            geographies = "21067999999",
+            geography = "tract",
+            format = "wide",
+            use_cache = TRUE,
+            refresh_cache = FALSE
+        ),
+        "No Cancer InFocus context rows were found"
+    )
+})

@@ -77,6 +77,16 @@ get_context <- function(
 
     context_data <- context_data[context_data$GEOID %in% geographies, , drop = FALSE]
 
+    if (nrow(context_data) == 0) {
+        rlang::abort(
+            paste0(
+                "No Cancer InFocus context rows were found for the requested ",
+                "geographies. Check that `geographies` contains valid GEOIDs ",
+                "available in the hosted ContextLinkr data."
+            )
+        )
+    }
+
     if (!is.null(measures)) {
         context_data <- context_data[context_data$def %in% measures, , drop = FALSE]
     }
