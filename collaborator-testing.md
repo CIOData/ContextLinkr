@@ -156,3 +156,21 @@ get_context(
   refresh_cache = TRUE
 )
 ```
+
+## Validated failure paths
+
+The collaborator-beta version has been checked for the following common user-facing issues:
+
+- malformed tract GEOIDs;
+- unsupported tract state FIPS codes;
+- valid-looking tract GEOIDs with no hosted context rows;
+- unknown measure names;
+- empty measure searches;
+- missing tract columns in `add_context()`;
+- missing or blank tract IDs;
+- duplicated individual records within the same tract;
+- cache clearing and cache rebuild behavior;
+- unsupported `format` and `geography` arguments.
+
+If you encounter a confusing error message, please include the exact function call, 
+error text, operating system, R version, and ContextLinkr version in your feedback.
