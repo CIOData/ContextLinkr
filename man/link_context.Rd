@@ -13,7 +13,7 @@ link_context(
   zip = NULL,
   lat = NULL,
   lon = NULL,
-  state,
+  state = NULL,
   geocoder = c("census_batch", "census_single", "osm"),
   confirm_external = FALSE,
   year = 2023,
@@ -48,8 +48,12 @@ geocoding is skipped.}
 \item{lon}{Optional longitude column. If both \code{lat} and \code{lon} are supplied,
 geocoding is skipped.}
 
-\item{state}{State abbreviation, state FIPS code, or vector of states used
-for Census tract lookup. Passed to \code{\link[=id_tract]{id_tract()}}.}
+\item{state}{Optional state abbreviation, name, or FIPS code used to limit
+tract lookup. Required for coordinate-based tract lookup in the current
+version. For address-based workflows, \code{state} may be omitted when the
+geocoder returns state information, which ContextLinkr stores in
+\code{geocoded_state}. Providing \code{state} explicitly overrides inferred geocoded
+state values.}
 
 \item{geocoder}{Geocoder passed to \code{\link[=gc_address]{gc_address()}} when geocoding is needed.}
 

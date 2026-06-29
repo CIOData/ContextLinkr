@@ -39,7 +39,8 @@ permission to send address data to the selected geocoding services.}
 }
 \value{
 A tibble containing the original input columns plus \code{latitude},
-\code{longitude}, and geocoding metadata returned by \code{tidygeocoder}.
+\code{longitude}, \code{geocoded_state} when returned by the selected geocoder, and
+geocoding metadata.
 }
 \description{
 Geocodes records using either a single full-address column or separate street,

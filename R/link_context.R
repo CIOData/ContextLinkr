@@ -26,8 +26,12 @@
 #'   geocoding is skipped.
 #' @param lon Optional longitude column. If both `lat` and `lon` are supplied,
 #'   geocoding is skipped.
-#' @param state State abbreviation, state FIPS code, or vector of states used
-#'   for Census tract lookup. Passed to [id_tract()].
+#' @param state Optional state abbreviation, name, or FIPS code used to limit
+#'   tract lookup. Required for coordinate-based tract lookup in the current
+#'   version. For address-based workflows, `state` may be omitted when the
+#'   geocoder returns state information, which ContextLinkr stores in
+#'   `geocoded_state`. Providing `state` explicitly overrides inferred geocoded
+#'   state values.
 #' @param geocoder Geocoder passed to [gc_address()] when geocoding is needed.
 #' @param confirm_external Logical. Must be `TRUE` before address data are sent
 #'   to an external geocoding service.
@@ -87,7 +91,7 @@ link_context <- function(
         zip = NULL,
         lat = NULL,
         lon = NULL,
-        state,
+        state = NULL,
         geocoder = c("census_batch", "census_single", "osm"),
         confirm_external = FALSE,
         year = 2023,
@@ -101,10 +105,6 @@ link_context <- function(
 ) {
     if (!is.data.frame(.data)) {
         rlang::abort("`.data` must be a data frame.")
-    }
-
-    if (missing(state) || is.null(state)) {
-        rlang::abort("`state` is required for tract lookup.")
     }
 
     if (!is.logical(include_context) || length(include_context) != 1 || is.na(include_context)) {
@@ -136,6 +136,16 @@ link_context <- function(
     }
 
     if (has_lat && has_lon) {
+        if (is.null(state)) {
+            rlang::abort(
+                paste(
+                    "`state` is required for coordinate-based tract lookup.",
+                    "For address-based workflows, `state` may be omitted when the",
+                    "geocoder returns state information."
+                )
+            )
+        }
+
         result <- do.call(
             id_tract,
             list(
@@ -209,17 +219,19 @@ link_context <- function(
 
         geocoded <- do.call(gc_address, geocode_args)
 
-        result <- do.call(
-            id_tract,
-            list(
-                .data = geocoded,
-                lat = "latitude",
-                lon = "longitude",
-                state = state,
-                year = year,
-                keep_geometry = keep_geometry,
-                cache = cache
-            )
+        geocoded <- prepare_link_context_state(
+            geocoded = geocoded,
+            state = state
+        )
+
+        result <- id_tract_by_state(
+            .data = geocoded,
+            lat = "latitude",
+            lon = "longitude",
+            state_col = ".link_context_state",
+            year = year,
+            keep_geometry = keep_geometry,
+            cache = cache
         )
     }
 
@@ -247,4 +259,61 @@ link_context <- function(
     }
 
     result
+}
+
+prepare_link_context_state <- function(geocoded, state = NULL) {
+    if (!is.null(state)) {
+        geocoded[[".link_context_state"]] <- state
+        return(geocoded)
+    }
+
+    if ("geocoded_state" %in% names(geocoded)) {
+        geocoded[[".link_context_state"]] <- geocoded[["geocoded_state"]]
+        return(geocoded)
+    }
+
+    rlang::abort(
+        paste(
+            "`state` was not supplied and state could not be inferred from the",
+            "geocoded address output. Provide `state` explicitly, or use a geocoder",
+            "configuration that returns `geocoded_state`."
+        )
+    )
+}
+
+id_tract_by_state <- function(.data, lat, lon, state_col, year, keep_geometry, cache) {
+    state_values <- unique(stats::na.omit(as.character(.data[[state_col]])))
+    state_values <- state_values[nzchar(state_values)]
+
+    if (length(state_values) == 0L) {
+        rlang::abort(
+            paste(
+                "No valid state values were available for tract lookup.",
+                "Check geocoding results or provide `state` explicitly."
+            )
+        )
+    }
+
+    pieces <- lapply(state_values, function(state_value) {
+        state_data <- .data[as.character(.data[[state_col]]) == state_value, , drop = FALSE]
+
+        do.call(
+            id_tract,
+            list(
+                .data = state_data,
+                lat = lat,
+                lon = lon,
+                state = state_value,
+                year = year,
+                keep_geometry = keep_geometry,
+                cache = cache
+            )
+        )
+    })
+
+    out <- do.call(rbind, pieces)
+
+    out[[".link_context_state"]] <- NULL
+
+    tibble::as_tibble(out)
 }

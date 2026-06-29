@@ -22,7 +22,8 @@
 #' @param quiet Logical. If `FALSE`, prints a short geocoding summary.
 #'
 #' @return A tibble containing the original input columns plus `latitude`,
-#'   `longitude`, and geocoding metadata returned by `tidygeocoder`.
+#'   `longitude`, `geocoded_state` when returned by the selected geocoder, and
+#'   geocoding metadata.
 #'
 #' @examples
 #' sample_addresses <- tibble::tibble(
@@ -121,11 +122,24 @@ gc_address <- function(
             street = street_col,
             city = city_col,
             state = state_col,
-            postalcode = zip_col
+            postalcode = zip_col,
+            full_results = TRUE
         ),
         lat = "latitude",
         long = "longitude"
     )
+
+    if ("addressComponents.state" %in% names(result)) {
+        result[["geocoded_state"]] <- result[["addressComponents.state"]]
+    }
+
+    tidygeocoder_extra_cols <- grep(
+        "^(matchedAddress|tigerLine\\.|addressComponents\\.)",
+        names(result),
+        value = TRUE
+    )
+
+    result <- result[, setdiff(names(result), tidygeocoder_extra_cols), drop = FALSE]
 
     result <- add_geocode_status(result, has_full_address = has_full_address)
 

@@ -423,3 +423,56 @@ test_that("link_context() validates context_refresh_cache", {
         "`context_refresh_cache` must be a single non-missing logical value"
     )
 })
+
+test_that("link_context infers state from geocoded address output", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "Set CONTEXTLINKR_RUN_CIF_INTEGRATION=true to run live integration tests."
+    )
+
+    records <- data.frame(
+        person_id = "test_001",
+        address = "1600 Pennsylvania Ave NW, Washington, DC 20500"
+    )
+
+    out <- link_context(
+        records,
+        address = address,
+        geocoder = "census_single",
+        confirm_external = TRUE
+    )
+
+    expect_equal(nrow(out), 1L)
+    expect_true("tract_geoid" %in% names(out))
+    expect_true("geocoded_state" %in% names(out))
+    expect_equal(out[["geocoded_state"]][[1]], "DC")
+    expect_false("addressComponents.state" %in% names(out))
+})
+
+test_that("link_context supports multi-state address batches when geocoder returns state", {
+    skip_if_not(
+        identical(Sys.getenv("CONTEXTLINKR_RUN_CIF_INTEGRATION"), "true"),
+        message = "Set CONTEXTLINKR_RUN_CIF_INTEGRATION=true to run live integration tests."
+    )
+
+    records <- data.frame(
+        person_id = c("test_dc", "test_ky"),
+        address = c(
+            "1600 Pennsylvania Ave NW, Washington, DC 20500",
+            "800 Rose St, Lexington, KY 40536"
+        )
+    )
+
+    out <- link_context(
+        records,
+        address = address,
+        geocoder = "census_single",
+        confirm_external = TRUE
+    )
+
+    expect_equal(nrow(out), 2L)
+    expect_true("tract_geoid" %in% names(out))
+    expect_true("geocoded_state" %in% names(out))
+    expect_setequal(out[["geocoded_state"]], c("DC", "KY"))
+    expect_false(".link_context_state" %in% names(out))
+})
