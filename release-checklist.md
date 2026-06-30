@@ -2,7 +2,7 @@
 
 ## Collaborator beta release
 
-Use this checklist before tagging a collaborator-beta version such as `v0.1.0-beta.2`.
+Use this checklist before tagging a collaborator-beta version such as `v0.1.0-beta.3`.
 
 ### Code and tests
 
