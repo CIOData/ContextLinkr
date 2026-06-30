@@ -154,16 +154,15 @@ The example uses public coordinates and a synthetic record ID.
 
 ```r
 coordinate_records <- data.frame(
-  person_id = "test_001",
-  latitude = 38.8977,
-  longitude = -77.0365
+  person_id = "test_ky",
+  latitude = 38.0336,
+  longitude = -84.5037
 )
 
 linked <- link_context(
   coordinate_records,
   lat = latitude,
-  lon = longitude,
-  state = "DC"
+  lon = longitude
 )
 
 linked
@@ -256,10 +255,11 @@ linked_multi_state[, c(
 )]
 ```
 
-For complete address strings, `state` is not required when the selected geocoder 
-returns state information. ContextLinkr stores the inferred state in 
-`geocoded_state` and uses it internally for tract lookup. For coordinate-based 
-workflows, `state` is still required in the current version.
+In most address and coordinate workflows, `state` is optional. For address workflows, 
+ContextLinkr uses `geocoded_state` when returned by the geocoder. For coordinate 
+workflows, ContextLinkr infers state from latitude and longitude using 
+`tigris::states()`. Providing `state` explicitly is still allowed and overrides 
+inferred state values.
 
 ## 10. What to report
 

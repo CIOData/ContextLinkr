@@ -83,7 +83,6 @@ linked <- link_context(
   coordinate_records,
   lat = latitude,
   lon = longitude,
-  state = "DC"
 )
 
 linked
@@ -102,13 +101,17 @@ address_records <- data.frame(
 linked_from_address <- link_context(
   address_records,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
 
 linked_from_address
 ```
+
+For coordinate workflows, ContextLinkr attempts to infer state from latitude and 
+longitude using state polygons from `tigris::states()`. For address workflows, 
+ContextLinkr uses geocoded state information when available. Users can still 
+provide `state` explicitly when they want to constrain or override state inference.
 
 ## Review linkage results
 
@@ -179,7 +182,6 @@ linked_with_context <- link_context(
   coordinate_records,
   lat = latitude,
   lon = longitude,
-  state = "DC",
   include_context = TRUE,
   context_measures = "Total Population"
 )

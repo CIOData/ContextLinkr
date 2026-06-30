@@ -1,4 +1,26 @@
-# ContextLinkr 0.1.0.9000
+# ContextLinkr 0.1.0-beta.3
+
+## User-facing changes
+
+* Updated `link_context()` so `state` is optional in most coordinate-based workflows. When latitude and longitude are supplied and `state` is omitted, ContextLinkr now attempts to infer state using state polygons from `tigris::states()`.
+* Updated address-based `link_context()` workflows so `state` can be omitted when the selected geocoder returns state information.
+* Added cleaned `geocoded_state` output from `gc_address()` for geocoders that return state information.
+* Preserved explicit `state` as an override for both coordinate-based and address-based workflows.
+* Cleaned `gc_address()` output when full geocoder results are used internally, retaining useful ContextLinkr-facing fields while dropping verbose geocoder-specific columns.
+
+## Internal improvements
+
+* Added internal state-preparation helpers for `link_context()` workflows.
+* Added internal state-split tract lookup so multi-state address and coordinate batches can be processed without requiring users to split records manually.
+* Moved `link_context()` helper functions into `R/link_context_helpers.R` to keep `R/link_context.R` focused on the exported wrapper.
+* Removed the unused `maps` dependency after adopting a `tigris`-based state inference approach.
+
+## Testing and documentation
+
+* Updated `link_context()` tests to reflect inferred state behavior.
+* Added tests for address-based state inference, coordinate-based state inference, multi-state batches, and internal helper behavior.
+* Updated documentation to describe `state` as an optional override rather than a routine requirement.
+* Updated collaborator testing materials, README examples, and workflow vignette examples to reflect the cleaner `link_context()` API.
 
 ### Current development
 

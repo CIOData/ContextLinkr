@@ -68,7 +68,6 @@
 #' link_context(
 #'   sample_addresses,
 #'   address = address,
-#'   state = "DC",
 #'   geocoder = "census_single",
 #'   confirm_external = TRUE
 #' )
@@ -76,8 +75,14 @@
 #' link_context(
 #'   geocoded_data,
 #'   lat = latitude,
+#'   lon = longitude
+#' )
+#'
+#' link_context(
+#'   geocoded_data,
+#'   lat = latitude,
 #'   lon = longitude,
-#'   state = c("DC", "MD")
+#'   state = "KY"
 #' )
 #' }
 #'

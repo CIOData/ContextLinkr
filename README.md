@@ -62,22 +62,29 @@ ContextLinkr is designed for workflows where users start with
 individual-level records and want to add place-based contextual
 measures.
 
-A typical workflow is:
+## Typical workflow
 
-1.  Start with records that contain either address fields,
-    latitude/longitude coordinates, or Census tract GEOIDs.
-2.  Use `link_context()` to geocode records when needed and identify
-    Census tracts.
-3.  Use `add_context()` to add selected Cancer InFocus contextual
-    variables.
-4.  Use summary helpers to review linkage and context-joining results.
+A typical ContextLinkr workflow is:
+
+1.  Start with individual-level records.
+2.  Geocode addresses with `gc_address()` if tract GEOIDs are not
+    already available.
+3.  Identify Census tract GEOIDs with `id_tract()` or use
+    `link_context()` for end-to-end linkage.
+4.  Review linkage results with summary, success, and failure helpers.
+5.  Add hosted Cancer InFocus contextual measures with `add_context()`.
+6.  Inspect source metadata and output provenance with
+    `context_data_sources()` and `context_provenance()`.
+
+For beta testing, do not use patient, participant, or identifiable
+address-level data. Use synthetic records or public example tract
+GEOIDs.
 
 ``` r
 linked <- link_context(
   records,
   lat = latitude,
   lon = longitude,
-  state = "DC"
 )
 
 linked_with_context <- add_context(
@@ -97,7 +104,6 @@ linked_with_context <- link_context(
   records,
   lat = latitude,
   lon = longitude,
-  state = "DC",
   include_context = TRUE,
   context_measures = "Total Population"
 )
@@ -199,13 +205,19 @@ geocoding and identifies Census tracts directly.
 linked <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
 
 linked
 ```
+
+When using complete address strings, `state` is usually not required
+because ContextLinkr uses geocoded state information for tract lookup.
+When using latitude and longitude, `state` is also optional in most U.S.
+workflows because ContextLinkr can infer state from coordinates using
+`tigris::states()`. Providing `state` explicitly is still supported and
+overrides inferred state values.
 
 You can summarize the linked output with `link_summary()`:
 
@@ -251,8 +263,7 @@ can identify Census tracts without sending address fields to a geocoder:
 linked <- link_context(
   records,
   lat = latitude,
-  lon = longitude,
-  state = "DC"
+  lon = longitude
 )
 ```
 
@@ -281,7 +292,6 @@ For an end-to-end workflow, use `link_context()` with
 linked_with_context <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE,
   include_context = TRUE,
@@ -298,7 +308,6 @@ If records have already been linked to Census tracts, use
 linked <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
@@ -343,7 +352,9 @@ tract_context
 `join_context()` is a lower-level helper for joining user-supplied
 contextual data. Most users who want Cancer InFocus contextual variables
 should use `add_context()` or `link_context(include_context = TRUE)`
-instead.
+instead. The lower-level `join_context()` helper is available for
+advanced workflows where users already have a prepared contextual
+dataset with one row per geographic key.
 
 After records have been linked to Census tract geography,
 `join_context()` can join tract-level contextual variables to

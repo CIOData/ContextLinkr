@@ -70,7 +70,6 @@ linked <- link_context(
   records,
   lat = latitude,
   lon = longitude,
-  state = "DC"
 )
 
 linked_with_context <- add_context(
@@ -90,7 +89,6 @@ linked_with_context <- link_context(
   records,
   lat = latitude,
   lon = longitude,
-  state = "DC",
   include_context = TRUE,
   context_measures = "Total Population"
 )
@@ -188,13 +186,18 @@ available, `link_context()` skips geocoding and identifies Census tracts directl
 linked <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
 
 linked
 ```
+
+When using complete address strings, `state` is usually not required because ContextLinkr 
+uses geocoded state information for tract lookup. When using latitude and longitude, 
+`state` is also optional in most U.S. workflows because ContextLinkr can infer 
+state from coordinates using `tigris::states()`. Providing `state` explicitly is 
+still supported and overrides inferred state values.
 
 You can summarize the linked output with `link_summary()`:
 
@@ -237,8 +240,7 @@ identify Census tracts without sending address fields to a geocoder:
 linked <- link_context(
   records,
   lat = latitude,
-  lon = longitude,
-  state = "DC"
+  lon = longitude
 )
 ```
 
@@ -266,7 +268,6 @@ For an end-to-end workflow, use `link_context()` with `include_context = TRUE`:
 linked_with_context <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE,
   include_context = TRUE,
@@ -282,7 +283,6 @@ If records have already been linked to Census tracts, use `add_context()`:
 linked <- link_context(
   sample_addresses,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
