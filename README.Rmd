@@ -18,7 +18,7 @@ ContextLinkr is currently in collaborator-beta development and can be installed 
 install.packages("remotes")
 
 remotes::install_github(
-  "CIOData/ContextLinkr@v0.1.0-beta.2",
+  "CIOData/ContextLinkr@v0.1.0-beta.3",
   upgrade = "never",
   dependencies = TRUE,
   build_vignettes = FALSE

@@ -16,7 +16,7 @@ feedback tied to the same package snapshot.
 install.packages("remotes")
 
 remotes::install_github(
-  "CIOData/ContextLinkr@v0.1.0-beta.2",
+  "CIOData/ContextLinkr@v0.1.0-beta.3",
   upgrade = "never",
   dependencies = TRUE,
   build_vignettes = FALSE
