@@ -223,7 +223,6 @@ address_records <- data.frame(
 linked_from_address <- link_context(
   address_records,
   address = address,
-  state = "DC",
   geocoder = "census_single",
   confirm_external = TRUE
 )
@@ -232,6 +231,35 @@ linked_from_address
 
 link_summary(linked_from_address)
 ```
+
+```r
+multi_state_records <- data.frame(
+  person_id = c("test_dc", "test_ky"),
+  address = c(
+    "1600 Pennsylvania Ave NW, Washington, DC 20500",
+    "800 Rose St, Lexington, KY 40536"
+  )
+)
+
+linked_multi_state <- link_context(
+  multi_state_records,
+  address = address,
+  geocoder = "census_single",
+  confirm_external = TRUE
+)
+
+linked_multi_state[, c(
+  "person_id",
+  "geocoded_state",
+  "tract_geoid",
+  ".tract_identified"
+)]
+```
+
+For complete address strings, `state` is not required when the selected geocoder 
+returns state information. ContextLinkr stores the inferred state in 
+`geocoded_state` and uses it internally for tract lookup. For coordinate-based 
+workflows, `state` is still required in the current version.
 
 ## 10. What to report
 

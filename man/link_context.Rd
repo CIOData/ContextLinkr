@@ -48,12 +48,12 @@ geocoding is skipped.}
 \item{lon}{Optional longitude column. If both \code{lat} and \code{lon} are supplied,
 geocoding is skipped.}
 
-\item{state}{Optional state abbreviation, name, or FIPS code used to limit
-tract lookup. Required for coordinate-based tract lookup in the current
-version. For address-based workflows, \code{state} may be omitted when the
-geocoder returns state information, which ContextLinkr stores in
-\code{geocoded_state}. Providing \code{state} explicitly overrides inferred geocoded
-state values.}
+\item{state}{Optional state abbreviation, name, FIPS code, or vector of states
+used to limit Census tract lookup. If omitted in coordinate-based
+workflows, ContextLinkr attempts to infer state from latitude and longitude
+using state polygons from \code{\link[tigris:states]{tigris::states()}}. If omitted in address-based
+workflows, ContextLinkr uses geocoded state information when available.
+Providing \code{state} explicitly overrides inferred state values.}
 
 \item{geocoder}{Geocoder passed to \code{\link[=gc_address]{gc_address()}} when geocoding is needed.}
 
